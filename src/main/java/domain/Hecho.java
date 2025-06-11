@@ -23,7 +23,8 @@ public class Hecho {
     public String getTitulo() {
         return Titulo;
     }
-
+    public Categoria getCategoria() {return categoria;}
+    public Etiqueta getEtiqueta() {return etiqueta;}
     // Generar los getters y setters (usar lombok)
     public void cambiarDescripcion(String dato) {
         descripcion = dato;

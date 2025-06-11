@@ -6,6 +6,13 @@ public class Revision {
     private EnumEstado estado;
     private Contribuyente responsable;
 
+    //Primera instancia de la revision en Contribucion con msj default y estado Pendiente
+    public Revision(Contribuyente responsable) {
+        this.mensaje = "El hecho está pendiente de revisión";
+        this.estado = EnumEstado.PENDIENTE;
+        this.responsable = responsable;
+    }
+
     public Revision(String mensaje, EnumEstado estado, Contribuyente responsable) {
         this.mensaje = mensaje;
         this.estado = estado;
@@ -27,5 +34,6 @@ public class Revision {
     public void setEstado(EnumEstado nuevoEstado) {
         this.estado = nuevoEstado;
     }
+    public void setMensaje(String mensaje) {this.mensaje = mensaje;}
 
 }
