@@ -8,20 +8,22 @@ public class SolicitudEliminacion {
     private Hecho hecho;
     private LocalDate fecha;
     private String motivo;
-    private EnumEstado estado;
+    private EnumEstadoSol estado;
 
     public SolicitudEliminacion(Contribuyente solicitante, Hecho hecho, LocalDate fecha, String motivo) {
+        /**
         if (motivo == null || motivo.length() < 500) {
             throw new IllegalArgumentException("El motivo debe tener al menos 500 caracteres.");
-        }
+        } COMENTARIO: Se delego al gestor de spam
+        */ 
         this.solicitante = solicitante;
         this.hecho = hecho;
         this.fecha = fecha;
         this.motivo = motivo;
-        this.estado = EnumEstado.PENDIENTE;
+        this.estado = EnumEstadoSol.PENDIENTE;
     }
 
-    public void cambiarEstado(EnumEstado nuevoEstado) {
+    public void cambiarEstado(EnumEstadoSol nuevoEstado) {
         this.estado = nuevoEstado;
     }
 
@@ -37,7 +39,7 @@ public class SolicitudEliminacion {
         return motivo;
     }
 
-    public EnumEstado getEstado(){
+    public EnumEstadoSol getEstado(){
         return estado;
     }
 }
