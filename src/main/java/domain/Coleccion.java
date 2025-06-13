@@ -19,13 +19,23 @@ public class Coleccion {
         this.criterioDePertenencia = new ArrayList<>();
         this.hechos = new ArrayList<>();
     }
+    public Coleccion(String titulo, String descripcion, Fuente fuente, List<InterfaceCondicion> criterio) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.fuente = fuente;
+        this.criterioDePertenencia = criterio;
+        this.hechos = new ArrayList<>();
+    }
 
     public void cambiarCriterioDePertenencia(List<InterfaceCondicion> criterio) {
         criterioDePertenencia = criterio;
     }
     //revisar
     public List<Hecho> obtenerHechos() {
-        return this.fuente.obtenerHecho();
+        List<Hecho> hechos = new ArrayList<>();
+        hechos = this.fuente.obtenerHechos();
+        hechos.forEach((h) -> h.setFuente(fuente));
+        return hechos; //Arreglar dps
     }
 
     public String getTitulo() { return this.titulo;}

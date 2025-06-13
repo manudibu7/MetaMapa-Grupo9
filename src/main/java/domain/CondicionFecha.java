@@ -6,8 +6,10 @@ import java.time.LocalDate;
 public class CondicionFecha implements InterfaceCondicion {
     private LocalDate fecha;
 
+    //Por ahora 12/06 Pensado para que sea el mismo dia
+
     @Override
     public boolean cumpleCondicion(Hecho hecho) {
-        return this.fecha == hecho.fecha;
+        return this.fecha == hecho.getFecha();
     }
 }

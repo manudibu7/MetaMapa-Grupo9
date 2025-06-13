@@ -10,15 +10,21 @@ public class Hecho {
     private Categoria categoria;
     private LocalDate fecha;
     private LocalDate fechaDeCarga;
-    //private Fuente fuente;
-    private String handle;
-    private Ubicacion ubicacion;
+    private Fuente fuente;
+    private Ubicacion lugarDeOcurrencia;
     private String origen;
     private Etiqueta etiqueta;
-    private boolean visibilidad = false;
+    private boolean visibilidad = true;
 
-    public Hecho(String titulo, String descripcion, String categoria,String latitud, String longitud, String fecha) {
-    //TODO
+    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha) {
+        this.Titulo = titulo;
+        this.descripcion = descripcion;
+        this.categoria = categoria;
+        this.lugarDeOcurrencia = lugarDeOcurrencia;
+        this.fecha = fecha;
+
+
+
     }
     public String getTitulo() {
         return Titulo;
@@ -37,13 +43,20 @@ public class Hecho {
     public void cambiarUbicacion(String dato, String dato1) {
         float nuevaLatitud = Float.parseFloat(dato);
         float nuevaLongitud = Float.parseFloat(dato1);
-        ubicacion.setUbicacion(nuevaLatitud,nuevaLongitud);
+        lugarDeOcurrencia.setUbicacion(nuevaLatitud,nuevaLongitud);
     }
 
     //string a fecha??
+    public LocalDate getFecha() {return fecha;}
     public void cambiarFecha(String dato) {
         //TODO
     }
+
+    public void setFuente(Fuente fuente) {
+        this.fuente = fuente;
+    }
+
+    public String getOrigen() {return origen;}
 
     public Boolean esVisible() {return visibilidad;}
     public void cambiarVisibilidad() {visibilidad = true;} //asi por el momento
@@ -51,5 +64,6 @@ public class Hecho {
     public void cambiarEtiqueta(String dato) {
         etiqueta.setNombre(dato);
     }
+
 
 }
