@@ -2,9 +2,14 @@ package domain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.lang.Float.parseFloat;
 
 public class LectosCSV implements ILector {
 
@@ -58,6 +63,9 @@ public class LectosCSV implements ILector {
     }
 
     private Hecho crearHecho(String[] datos) {
-        return new Hecho(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5]);
+      //  Categoria categoria = encontrarCategoria(datos[2]); , aqui deberiamos buscar la categoria o crearla en caso de no existir
+        Ubicacion ubicacion = new Ubicacion ((parseFloat(datos[3]), parseFloat(datos[4]));
+        LocalDate fecha = LocalDate.parse(datos[5]);
+        return new Hecho(datos[0], datos[1], categoria,ubicacion,fecha);
     }
 }
