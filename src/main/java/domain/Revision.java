@@ -1,19 +1,22 @@
 package domain;
 
+import java.time.LocalDate;
+
 public class Revision {
 
     private String mensaje;
-    private EnumEstado estado;
+    private EstadoRevision estado;
     private Contribuyente responsable;
+    private LocalDate fecha;
 
     //Primera instancia de la revision en Contribucion con msj default y estado Pendiente
     public Revision(Contribuyente responsable) {
         this.mensaje = "El hecho está pendiente de revisión";
-        this.estado = EnumEstado.PENDIENTE;
+        this.estado = new Pendiente();
         this.responsable = responsable;
     }
 
-    public Revision(String mensaje, EnumEstado estado, Contribuyente responsable) {
+    public Revision(String mensaje, EstadoRevision estado, Contribuyente responsable) {
         this.mensaje = mensaje;
         this.estado = estado;
         this.responsable = responsable;
@@ -23,17 +26,9 @@ public class Revision {
         return mensaje;
     }
 
-    public EnumEstado getEstado(){
-        return estado;
-    }
-
     public Contribuyente getResponsable() {
         return responsable;
     }
 
-    public void setEstado(EnumEstado nuevoEstado) {
-        this.estado = nuevoEstado;
-    }
     public void setMensaje(String mensaje) {this.mensaje = mensaje;}
-
 }

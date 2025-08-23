@@ -14,6 +14,7 @@ public class Hecho {
     private Ubicacion lugarDeOcurrencia;
     private String origen;
     private Etiqueta etiqueta;
+    private EnumEstadoHecho estado;
     private boolean visibilidad = true;
 
     public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha) {
@@ -23,22 +24,16 @@ public class Hecho {
         this.lugarDeOcurrencia = lugarDeOcurrencia;
         this.fecha = fecha;
 
-
-
     }
-    public String getTitulo() {
-        return Titulo;
-    }
+    //getters y setters
+    public String getTitulo() {return Titulo;}
+    public void cambiarTitulo(String titulo) {this.Titulo= titulo;}
+    public void cambiarDescripcion(String descripcion) {this.descripcion = descripcion;}
     public Categoria getCategoria() {return categoria;}
+    public void cambiarCategoria(String categoria) {this.categoria.setNombre(categoria);}
     public Etiqueta getEtiqueta() {return etiqueta;}
-    // Generar los getters y setters (usar lombok)
-    public void cambiarDescripcion(String dato) {
-        descripcion = dato;
-    }
+    public void cambiarEtiqueta(String etiqueta) {this.etiqueta.setNombre(etiqueta);}
 
-    public void cambiarCategoria(String dato) {
-        categoria.setNombre(dato);
-    }
     //¿por alguna razon lectorCSV los necesita en STRING?
     public void cambiarUbicacion(String dato, String dato1) {
         float nuevaLatitud = Float.parseFloat(dato);
@@ -61,9 +56,5 @@ public class Hecho {
     public Boolean esVisible() {return visibilidad;}
     public void cambiarVisibilidad() {visibilidad = true;} //asi por el momento
 
-    public void cambiarEtiqueta(String dato) {
-        etiqueta.setNombre(dato);
-    }
-
-
+    public void cambiarEstado(EnumEstadoHecho estado) {this.estado = estado;}
 }
