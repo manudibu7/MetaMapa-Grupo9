@@ -10,77 +10,57 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class FuenteMetamapa extends FuenteProxy {
 
-    private String apiUrl;
-    private ObjectMapper mapper;
+    private MetaMapaClient client;
+    private String url;
 
-    public FuenteMetamapa(String apiUrl) {
-        super(null); // No se usa una fuente interna
-        this.apiUrl = apiUrl;
-        this.mapper = new ObjectMapper();
+    public FuenteMetamapa(MetaMapaClient client, String url) {
+        super(null);
+        this.client = client;
+        this.url = url;
     }
-
-    // Obtener todos los hechos
     @Override
     public List<Hecho> obtenerHechos() {
-        return obtenerHechosDesde(apiUrl + "/hechos");
+        return client.obtenerHechosDesdeUrl(url + "/hechos").block();
     }
 
     // Obtener hechos por colección
     public List<Hecho> obtenerHechosDeColeccion(String identificador) {
-        return obtenerHechosDesde(apiUrl + "/colecciones/" + identificador + "/hechos");
+        return client.obtenerHechosDesdeUrl(url + "/colecciones/" + identificador + "/hechos").block();
     }
 
-    // Realizar solicitud de eliminación
-    public boolean enviarSolicitudEliminacion(String textoSolicitud) {
-        try {
-            URL url = new URL(apiUrl + "/solicitudes");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setDoOutput(true);
-
-            String jsonBody = String.format("{"motivo": "%s"}", textoSolicitud);
-
-            try (DataOutputStream out = new DataOutputStream(con.getOutputStream())) {
-                out.writeBytes(jsonBody);
-                out.flush();
-            }
-
-            int responseCode = con.getResponseCode();
-            return responseCode == 200 || responseCode == 201;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public Mono<String> enviarSolicitudEliminacion(SolicitudEliminacion solicitud) {
+        return client.enviarSolicitudEliminacion(solicitud);
     }
 
-    // Método común para obtener hechos desde un endpoint
-    private List<Hecho> obtenerHechosDesde(String endpoint) {
-        List<Hecho> hechos = new ArrayList<>();
-        try {
-            URL url = new URL(endpoint);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Accept", "application/json");
+//    // Realizar solicitud de eliminación
+//    public boolean enviarSolicitudEliminacion(String textoSolicitud) {
+//        try {
+//            URL url = new URL(apiUrl + "/solicitudes");
+//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//            con.setRequestMethod("POST");
+//            con.setRequestProperty("Content-Type", "application/json");
+//            con.setDoOutput(true);
+//
+//            String jsonBody = String.format("{motivo : %s}", textoSolicitud);
+//
+//            try (DataOutputStream out = new DataOutputStream(con.getOutputStream())) {
+//                out.writeBytes(jsonBody);
+//                out.flush();
+//            }
+//
+//            int responseCode = con.getResponseCode();
+//            return responseCode == 200 || responseCode == 201;
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String inputLine;
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            hechos = mapper.readValue(response.toString(), new TypeReference<List<Hecho>>() {});
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return hechos;
-    }
 }

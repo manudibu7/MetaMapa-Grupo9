@@ -2,6 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Coleccion {
 
@@ -31,11 +32,16 @@ public class Coleccion {
         criterioDePertenencia = criterio;
     }
     //revisar
-    public List<Hecho> obtenerHechos() {
-        List<Hecho> hechos = new ArrayList<>();
-        hechos = this.fuente.obtenerHechos();
-        hechos.forEach((h) -> h.setFuente(fuente));
-        return hechos; //Arreglar dps
+    public void obtenerHechos() {
+        hechos = this.fuente.obtenerHechos().stream()
+                .filter(hecho -> criterioDePertenencia.stream()
+                        .allMatch(condicion -> condicion.cumpleCondicion(hecho)))
+                .collect(Collectors.toList());
+
+    }
+
+    public void setearFuente() {
+        this.hechos.forEach((h) -> h.setFuente(this.fuente));
     }
 
     public String getTitulo() { return this.titulo;}
