@@ -12,7 +12,6 @@
 * Manuel Di Bucci
 * Yerilin Jimena Villarreal Mamani
 * Lucas Gabriel Aponte
-* Santiago Javier De Franceschi
 * Fabricio Alejandro López Garro
 * Juan Diego Roque Huamaní
 
