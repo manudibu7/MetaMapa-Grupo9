@@ -50,6 +50,7 @@ public class Hecho {
     public void setFuente(Fuente fuente) {
         this.fuente = fuente;
     }
+    public Fuente getFuente() {return fuente;}
 
     public String getOrigen() {return origen;}
 
