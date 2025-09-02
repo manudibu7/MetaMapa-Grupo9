@@ -9,26 +9,28 @@ public class FuenteDemo extends Fuente {
     private Conexion conexion;
     private URL url;
     private LocalDateTime ultimaConsulta = LocalDateTime.now().minusHours(1);
-    private final List<Hecho> hechosCargados = new ArrayList<>();
+    private List<Hecho> hechosCargados;
+
+    public FuenteDemo( Conexion conexion, URL url) {
+        this.conexion = conexion;
+        this.url = url;
+        this.hechosCargados = new ArrayList<>();
+    }
 
     @Override
     public List<Hecho> obtenerHechos() {
         return this.hechosCargados;
     }
-//    @Override
-//    public List<Hecho> obtenerHechos() {
-//        Map<String, Object> datos = conexion.siguienteHecho(url, ultimaConsulta);
-//        if (datos != null) {
-//            Hecho hecho = construirHechoDesdeMapa(datos);
-//            hechos.add(hecho);
-//        }
-//        ultimaConsulta = LocalDateTime.now();
-//        return hechos;
-//    }
 
-    public void agregarHecho(Hecho h) {
-        hechosCargados.add(h);
+    public void agregarHecho() {
+        Map<String, Object> hechoObtenido = conexion.siguienteHecho(url, ultimaConsulta);
+        if( hechoObtenido != null) {
+            Hecho hechoMapeado = construirHechoDesdeMapa(hechoObtenido);
+            hechosCargados.add(hechoMapeado);
+        }
+        ultimaConsulta = LocalDateTime.now();
     }
+
     private Hecho construirHechoDesdeMapa(Map<String, Object> datos) {
         String titulo = (String) datos.get("titulo");
         String descripcion = (String) datos.get("descripcion");
