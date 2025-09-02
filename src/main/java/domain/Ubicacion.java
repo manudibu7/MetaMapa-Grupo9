@@ -13,4 +13,10 @@ public class Ubicacion {
         this.latitud = newLatitud;
         this.longitud = newLongitud;
     }
+
+    public float getLatitud() {return this.latitud;}
+
+    public float getLongitud() {
+        return longitud;
+    }
 }
