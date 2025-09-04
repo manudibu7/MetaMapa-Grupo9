@@ -1,17 +1,26 @@
 package domain;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Scanner;
 import java.util.List;
 
+@Getter
+@Setter
 public class Contribucion {
     private Contribuyente contribuyente;
     private Hecho hecho;
     private List<Revision> listaRevision;
+    private Long id;
+    private Boolean exportada;
+
 
 
     public Contribucion(Contribuyente contribuyente, Hecho hecho) {
         this.contribuyente = contribuyente.esAnonimo() ? null : contribuyente  ; //Esto hay que catchearlo siempre preguntar si es null o no D:
         this.hecho = hecho;
         this.listaRevision.add(new Revision(contribuyente));
+        this.exportada=false;
     }
     //Faltarían Get y Setters?
     //Modificacion de Revision no va en el dominio de Contribucion :D
