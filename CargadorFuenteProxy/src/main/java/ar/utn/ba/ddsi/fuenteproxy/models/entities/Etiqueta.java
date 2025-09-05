@@ -1,4 +1,4 @@
-package domain;
+package ar.utn.ba.ddsi.fuenteproxy.models.entities;
 
 public class Etiqueta {
     private String nombre;

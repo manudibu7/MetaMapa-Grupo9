@@ -1,4 +1,4 @@
-package domain;
+package ar.utn.ba.ddsi.fuenteproxy.models.entities;
 
 public class Ubicacion {
     private float latitud;

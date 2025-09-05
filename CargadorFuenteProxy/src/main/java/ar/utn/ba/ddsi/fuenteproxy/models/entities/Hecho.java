@@ -1,4 +1,4 @@
-package domain;
+package ar.utn.ba.ddsi.fuenteproxy.models.entities;
 
 import java.time.LocalDate;
 

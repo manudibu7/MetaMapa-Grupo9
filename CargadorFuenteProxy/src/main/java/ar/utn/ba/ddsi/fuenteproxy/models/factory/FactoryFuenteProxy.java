@@ -1,8 +1,12 @@
-package domain;
+package ar.utn.ba.ddsi.fuenteproxy.models.factory;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
+
+import ar.utn.ba.ddsi.fuenteproxy.models.entities.Conexion;
+import ar.utn.ba.ddsi.fuenteproxy.models.entities.FuenteDemo;
+import ar.utn.ba.ddsi.fuenteproxy.models.entities.FuenteMetamapa;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
