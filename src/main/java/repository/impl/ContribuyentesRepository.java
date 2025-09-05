@@ -1,13 +1,16 @@
 package repository.impl;
 
 import domain.Contribuyente;
+import org.springframework.stereotype.Repository;
 import repository.IContribuyentesRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class ContribuyentesRepository implements IContribuyentesRepository {
 
-    private List<Contribuyente> contribuyentes;
+    private List<Contribuyente> contribuyentes = new ArrayList<>();
 
     @Override
     public void guardar(Contribuyente contribuyente){

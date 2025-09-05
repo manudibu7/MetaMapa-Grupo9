@@ -8,13 +8,14 @@ import reactor.core.publisher.Mono;
 @Component
 public class FuenteMetamapa extends FuenteProxy {
 
-    private String url;
+    private String url= "http://localhost:8081"; // hardcode solo para test;
     private final WebClient webClient;
 
-    public FuenteMetamapa( String url, WebClient.Builder builder) {
+    public FuenteMetamapa( //String url,
+                           WebClient.Builder builder) {
         super(null);
         this.webClient = builder.build();
-        this.url = url;
+       // this.url = url;
     }
 
     @Override

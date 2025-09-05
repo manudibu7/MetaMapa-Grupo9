@@ -3,8 +3,10 @@ package repository;
 
 import domain.Contribucion;
 import domain.InterfaceCondicion;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 
 public interface IContribucionesRepository {
     public void guardar(Contribucion contribucion);

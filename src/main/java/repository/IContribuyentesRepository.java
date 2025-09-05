@@ -1,6 +1,7 @@
 package repository;
 
 import domain.Contribuyente;
+import org.springframework.stereotype.Repository;
 
 public interface IContribuyentesRepository {
     public void guardar(Contribuyente contribuyente);

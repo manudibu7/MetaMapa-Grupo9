@@ -39,9 +39,9 @@ public class Coleccion {
         return hechos; //Arreglar dps
     }
 
-    public void setearFuente() {
+    /*public void setearFuente() {
         this.hechos.forEach((h) -> h.setFuente(this.fuente));
-    }
+    }*/
     public List<Hecho> obtenerHechosConsensuados(List<Fuente> fuentes){ //hacer otro map 0 no consensuado 1 consensuado
         List<Hecho> hechosConsensuados=this.algoritmoDeConsenso.aplicar(this.hechos,fuentes);
         return hechosConsensuados;

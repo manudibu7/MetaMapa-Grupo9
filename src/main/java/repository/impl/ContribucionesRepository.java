@@ -2,10 +2,12 @@ package repository.impl;
 
 import domain.Contribucion;
 import domain.InterfaceCondicion;
+import org.springframework.stereotype.Repository;
 import repository.IContribucionesRepository;
 
 import java.util.List;
 
+@Repository
 public class ContribucionesRepository implements IContribucionesRepository {
     private List<Contribucion> contribuciones;
 
