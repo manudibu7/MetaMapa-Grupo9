@@ -12,7 +12,7 @@ import repository.IContribucionesRepository;
 
 @Service
 @RequiredArgsConstructor     // inyección por constructor (Spring)
-public class ServicioDeRevision {
+public class ServicioRevisiones {
 
     private final IContribucionesRepository repo;
     private final PreparadorParaAgregador preparador;
@@ -22,7 +22,7 @@ public class ServicioDeRevision {
     public void aceptar(Long idContribucion, String comentarios) {
         Contribucion c = repo.buscarPorId(idContribucion);
         c.agregarRevision(new Revision(EstadoRevision.ACEPTADO, comentarios, null));
-        c.setEstado(EstadoContribucion.LISTA_PARA_EXPORTAR);
+       // c.setEstado(EstadoContribucion.LISTA_PARA_EXPORTAR);
         repo.actualizar(c);
 
         HechoOutputDTO dto = preparador.preparar(c);
@@ -33,7 +33,7 @@ public class ServicioDeRevision {
     public void aceptarConSugerencias(Long idContribucion, String comentarios) {
         Contribucion c = repo.buscarPorId(idContribucion);
         c.agregarRevision(new Revision(EstadoRevision.ACEPTADO_CON_CAMBIOS, comentarios, null));
-        c.setEstado(EstadoContribucion.LISTA_PARA_EXPORTAR);
+        //c.setEstado(EstadoContribucion.LISTA_PARA_EXPORTAR);
         repo.actualizar(c);
 
         HechoOutputDTO dto = preparador.preparar(c);
@@ -44,7 +44,7 @@ public class ServicioDeRevision {
     public void rechazar(Long idContribucion, String comentarios) {
         Contribucion c = repo.buscarPorId(idContribucion);
         c.agregarRevision(new Revision(EstadoRevision.RECHAZADO, comentarios, null));
-        c.setEstado(EstadoContribucion.PENDIENTE);
+        //c.setEstado(EstadoContribucion.PENDIENTE);
         repo.actualizar(c);
     }
 }

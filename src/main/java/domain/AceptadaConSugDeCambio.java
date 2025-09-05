@@ -1,5 +1,9 @@
 package domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class AceptadaConSugDeCambio extends EstadoRevision {
     private String sugerencia;
 

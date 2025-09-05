@@ -5,6 +5,7 @@ import dtos.input.ArchivoInputDTO;
 import dtos.input.ContribucionInputDTO;
 import dtos.input.HechoInputDTO;
 import dtos.input.UbicacionInputDTO;
+import dtos.output.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repository.IContribucionesRepository;
@@ -39,6 +40,24 @@ public class ServicioContribuciones {
         return hecho;
     }
 
+    public HechoOutputDTO hechoToHechoOutputDTO(Hecho hecho){
+        HechoOutputDTO dto = new HechoOutputDTO();
+        dto.setTitulo(hecho.getTitulo());
+        dto.setDescripcion(hecho.getDescripcion());
+        dto.setFecha(hecho.getFecha().toString());
+        dto.setEtiqueta(hecho.getEtiqueta().toString());
+        if (hecho.getAdjunto() != null){
+            AdjuntoOutputDTO adjuntoDto = new AdjuntoOutputDTO();
+            adjuntoDto.setUrl(hecho.getAdjunto().getUrl());
+            adjuntoDto.setTipo(hecho.getAdjunto().getTipo().toString());
+            dto.setAdjunto(adjuntoDto);
+        }
+            UbicacionOutputDTO ubicacionDto= new UbicacionOutputDTO();
+            ubicacionDto.setLatitud(hecho.getLugarDeOcurrencia().getLatitud());
+            ubicacionDto.setLongitud(hecho.getLugarDeOcurrencia().getLongitud());
+            dto.setUbicacion(ubicacionDto);
+        return dto;
+    }
     public Ubicacion ubicacionDtoToUbicacion(UbicacionInputDTO dto){
         Ubicacion ubicacion = new Ubicacion();
         ubicacion.setLatitud(dto.getLatitud());
@@ -71,6 +90,16 @@ public class ServicioContribuciones {
 
     public Contribucion obtener(long id){
         return repositorio.buscarPorId(id);
+    }
+
+    public ContribucionOutputDTO contribucionAOutputDTO(Contribucion c){
+        ContribucionOutputDTO dto = new ContribucionOutputDTO();
+        HechoOutputDTO hechoDto = hechoToHechoOutputDTO(c.getHecho());
+        dto.setIdContribucion(c.getId());
+        dto.setIdContribuyente(c.getContribuyente().getId());
+
+        return dto;
+
     }
 
 
