@@ -3,6 +3,7 @@ package dtos.input;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class HechoInputDTO {
@@ -10,9 +11,8 @@ public class HechoInputDTO {
     String descripcion;
     Date fecha;
     UbicacionInputDTO ubicacion;
-    String lugarDeOcurrencia;
     // el adjunto se agrega despues
     // fechaDeCarga se completa cuando se sube a la bbdd central
-    //origen???
-    //etiquetas??
+    //origen: lo llena el agregador
+    String etiqueta;
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
@@ -13,7 +14,7 @@ public class Hecho {
     private String Titulo;
     private String descripcion;
     private Categoria categoria;
-    private LocalDate fecha;
+    private Date fecha;
     private LocalDate fechaDeCarga;
     private Fuente fuente;
     private Ubicacion lugarDeOcurrencia;
@@ -23,14 +24,7 @@ public class Hecho {
     private boolean visibilidad = true;
     private Archivo adjunto;
 
-    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha) {
-        this.Titulo = titulo;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.lugarDeOcurrencia = lugarDeOcurrencia;
-        this.fecha = fecha;
 
-    }
     //getters y setters
     public String getTitulo() {return Titulo;}
     public void cambiarTitulo(String titulo) {this.Titulo= titulo;}
@@ -48,7 +42,7 @@ public class Hecho {
     }
 
     //string a fecha??
-    public LocalDate getFecha() {return fecha;}
+    public Date getFecha() {return fecha;}
     public void cambiarFecha(String dato) {
         //TODO
     }

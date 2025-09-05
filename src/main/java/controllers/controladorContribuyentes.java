@@ -22,7 +22,7 @@ public class controladorContribuyentes {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ContribuyenteOutputDTO> obtenerContribuyente(@PathVariable Long id){
+    ResponseEntity<ContribuyenteOutputDTO> obtenerContribuyente(@PathVariable long id){
         ContribuyenteOutputDTO contribuyenteOutputDTO = new ContribuyenteOutputDTO();
         var c = servicioContribuyente.buscarContribuyente(id);
         if (c == null) return ResponseEntity.status(404).body(null);

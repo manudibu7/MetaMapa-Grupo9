@@ -12,7 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         "repository",
         "domain",
         "dtos",
-        "Routes"
+        "Routes",
+        "Infrastructure",
 })
 public class Main {
     public static void main(String[] args) {

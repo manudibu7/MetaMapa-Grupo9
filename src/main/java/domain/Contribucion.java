@@ -16,12 +16,12 @@ public class Contribucion {
 
 
 
-    public Contribucion(Contribuyente contribuyente, Hecho hecho) {
+    /*public Contribucion(Contribuyente contribuyente, Hecho hecho) {
         this.contribuyente = contribuyente.esAnonimo() ? null : contribuyente  ; //Esto hay que catchearlo siempre preguntar si es null o no D:
         this.hecho = hecho;
         this.listaRevision.add(new Revision(contribuyente));
         this.exportada=false;
-    }
+    } */
     //Faltarían Get y Setters?
     //Modificacion de Revision no va en el dominio de Contribucion :D
 
