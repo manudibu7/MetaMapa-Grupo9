@@ -14,48 +14,9 @@ public class Hecho {
     private String Titulo;
     private String descripcion;
     private Categoria categoria;
-    private Date fecha;
-    private LocalDate fechaDeCarga;
-    private Fuente fuente;
+    private LocalDate fecha;
     private Ubicacion lugarDeOcurrencia;
     private String origen;
     private Etiqueta etiqueta;
-    private EnumEstadoHecho estado;
-    private boolean visibilidad = true;
     private Archivo adjunto;
-
-
-    //getters y setters
-    public String getTitulo() {return Titulo;}
-    public void cambiarTitulo(String titulo) {this.Titulo= titulo;}
-    public void cambiarDescripcion(String descripcion) {this.descripcion = descripcion;}
-    public Categoria getCategoria() {return categoria;}
-    public void cambiarCategoria(String categoria) {this.categoria.setNombre(categoria);}
-    public Etiqueta getEtiqueta() {return etiqueta;}
-    public void cambiarEtiqueta(String etiqueta) {this.etiqueta.setNombre(etiqueta);}
-
-    //¿por alguna razon lectorCSV los necesita en STRING?
-    public void cambiarUbicacion(String dato, String dato1) {
-        float nuevaLatitud = Float.parseFloat(dato);
-        float nuevaLongitud = Float.parseFloat(dato1);
-        lugarDeOcurrencia.setUbicacion(nuevaLatitud,nuevaLongitud);
-    }
-
-    //string a fecha??
-    public Date getFecha() {return fecha;}
-    public void cambiarFecha(String dato) {
-        //TODO
-    }
-
-    public void setFuente(Fuente fuente) {
-        this.fuente = fuente;
-    }
-    public Fuente getFuente() {return fuente;}
-
-    public String getOrigen() {return origen;}
-
-    public Boolean esVisible() {return visibilidad;}
-    public void cambiarVisibilidad() {visibilidad = true;} //asi por el momento
-
-    public void cambiarEstado(EnumEstadoHecho estado) {this.estado = estado;}
 }

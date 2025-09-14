@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         "dtos",
         "Routes",
         "Infrastructure",
+        "mappers"
 })
 public class Main {
     public static void main(String[] args) {

@@ -1,14 +1,14 @@
 package domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Categoria {
     private String nombre;
-
-    public Categoria(String nombre) {
-        this.nombre = nombre;
-    }
-    public String getNombre(){return nombre;}
-    public void setNombre(String dato) {nombre = dato;}
-
-
-
 }

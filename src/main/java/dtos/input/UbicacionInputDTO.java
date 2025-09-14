@@ -1,9 +1,12 @@
 package dtos.input;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UbicacionInputDTO {
     float latitud;
     float longitud;

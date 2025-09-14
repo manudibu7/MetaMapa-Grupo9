@@ -1,39 +1,21 @@
 package domain;
 
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Revision {
 
-    private String mensaje;
-    private EstadoRevision estado;
+    private String mensaje = "El hecho está pendiente de revisión";
+    private EstadoRevision estado = EstadoRevision.PENDIENTE;
     private Contribuyente responsable;
     private LocalDate fecha;
-
-    //Primera instancia de la revision en Contribucion con msj default y estado Pendiente
-    public Revision(Contribuyente responsable) {
-        this.mensaje = "El hecho está pendiente de revisión";
-        this.estado = new Pendiente();
-        this.responsable = responsable;
-    }
-
-    public Revision(String mensaje, EstadoRevision estado, Contribuyente responsable) {
-        this.mensaje = mensaje;
-        this.estado = estado;
-        this.responsable = responsable;
-    }
-
-    public String getMensaje() {
-        return mensaje;
-    }
-
-    public Contribuyente getResponsable() {
-        return responsable;
-    }
-
-    public void setMensaje(String mensaje) {this.mensaje = mensaje;}
+    private Contribucion contribucion;
 }

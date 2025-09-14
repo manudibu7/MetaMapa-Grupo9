@@ -14,4 +14,5 @@ public interface IContribucionesRepository {
     public void eliminar(Long id);
     public void actualizar(Contribucion contribucion);
     public List<Contribucion> buscarPorFiltro(List<InterfaceCondicion> filtros);
+    public List<Contribucion> buscarTodas();
 }

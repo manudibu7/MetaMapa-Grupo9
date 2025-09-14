@@ -1,12 +1,15 @@
 package domain;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Etiqueta {
     private String nombre;
-
-    public Etiqueta(String etiqueta) {
-        this.nombre = etiqueta;
-    }
-
-    public String getNombre() {return nombre;}
-    public void setNombre(String dato) {nombre = dato;}
 }

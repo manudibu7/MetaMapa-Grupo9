@@ -16,7 +16,7 @@ public class ServicioContribuyente {
                                                 contribuyenteInputDTO.getApellido(),
                                                 contribuyenteInputDTO.getEdad());
         if(contribuyenteInputDTO.getNombre() == null && contribuyenteInputDTO.getApellido() == null){
-            nuevo.cambiarAnonimato(true);
+            nuevo.setAnonimo(true);
         }
         repositorio.guardar(nuevo);
         return nuevo.getId();

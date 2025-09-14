@@ -1,45 +1,35 @@
 package domain;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Contribucion {
     private Contribuyente contribuyente;
     private Hecho hecho;
-    private List<Revision> listaRevision;
+    private Revision revision= new Revision();
     private Long id;
     private Boolean exportada;
 
 
 
-    /*public Contribucion(Contribuyente contribuyente, Hecho hecho) {
-        this.contribuyente = contribuyente.esAnonimo() ? null : contribuyente  ; //Esto hay que catchearlo siempre preguntar si es null o no D:
-        this.hecho = hecho;
-        this.listaRevision.add(new Revision(contribuyente));
-        this.exportada=false;
-    } */
-    //Faltarían Get y Setters?
-    //Modificacion de Revision no va en el dominio de Contribucion :D
-
     //metodos que figuran en el diagrama
     public void editarHecho(){
         //para que ingrese un dato del hecho
         Scanner obj = new Scanner(System.in);
-        hecho.cambiarTitulo(obj.nextLine());
-        hecho.cambiarDescripcion(obj.nextLine());
-        hecho.cambiarCategoria(obj.nextLine());
-        hecho.cambiarEtiqueta(obj.nextLine());
-        hecho.cambiarFecha(obj.nextLine());
-        hecho.cambiarUbicacion(obj.nextLine(), obj.nextLine());
-    }
-    public void agregarRevision(Revision nuevaRevision){
-        listaRevision.add(nuevaRevision);
-    }
-    public void cambiarEstadoHecho(){
-        this.hecho.cambiarEstado(EnumEstadoHecho.DADO_DE_BAJA);
+        hecho.setTitulo(obj.nextLine());
+        hecho.setDescripcion(obj.nextLine());
+        hecho.setCategoria(new Categoria(obj.nextLine()));
+        hecho.setEtiqueta(new Etiqueta(obj.nextLine()));
+        hecho.setFecha(LocalDate.parse(obj.nextLine()));
+        hecho.setLugarDeOcurrencia(new Ubicacion(Float.parseFloat(obj.nextLine()), Float.parseFloat(obj.nextLine())));
     }
 }

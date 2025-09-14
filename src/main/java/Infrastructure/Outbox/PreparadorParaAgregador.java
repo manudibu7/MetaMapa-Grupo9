@@ -19,17 +19,19 @@ public class PreparadorParaAgregador {
         ubicacionDTO.setLatitud(u.getLatitud());
         ubicacionDTO.setLongitud(u.getLongitud());
 
-        AdjuntoOutputDTO adjuntoDTO = new AdjuntoOutputDTO();
-        adjuntoDTO.setId(hecho.getAdjunto().getId());
-        adjuntoDTO.setTipo(hecho.getAdjunto().getTipo().toString());
-        adjuntoDTO.setUrl(hecho.getAdjunto().getUrl());
-
+        AdjuntoOutputDTO adjuntoDTO = null;
+        if(hecho.getAdjunto() != null) {
+            adjuntoDTO = new AdjuntoOutputDTO();
+            adjuntoDTO.setId(hecho.getAdjunto().getId());
+            adjuntoDTO.setTipo(hecho.getAdjunto().getTipo().toString());
+            adjuntoDTO.setUrl(hecho.getAdjunto().getUrl());
+        }
         HechoOutputDTO dto = new HechoOutputDTO();
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
-        dto.setFecha(hecho.getFecha().toString());
+        dto.setFecha(hecho.getFecha());
         dto.setUbicacion(ubicacionDTO);
-        dto.setEtiqueta(hecho.getEtiqueta().toString());
+        dto.setEtiqueta(hecho.getEtiqueta().getNombre());
         dto.setAdjunto(adjuntoDTO);
 
         return dto;

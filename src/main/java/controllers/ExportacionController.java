@@ -2,8 +2,10 @@
 package controllers;
 
 import Infrastructure.Outbox.BandejaDeSalida;
+import dtos.output.ContribuyenteOutputDTO;
 import dtos.output.HechoOutputDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +18,10 @@ public class ExportacionController {
     private final BandejaDeSalida outbox;
 
     @GetMapping("/hechos")
-    public List<HechoOutputDTO> listarPendientes() {
-        return outbox.pendientesDeEnvio();   // Spring los serializa a JSON automáticamente
+    ResponseEntity<List<HechoOutputDTO>> obtenerContribuyente(){
+        List<HechoOutputDTO> hechos = outbox.pendientesDeEnvio();
+        outbox.limpiar();
+        return ResponseEntity.status(200).body(hechos);
     }
 }
 

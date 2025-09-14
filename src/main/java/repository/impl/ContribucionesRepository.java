@@ -5,11 +5,12 @@ import domain.InterfaceCondicion;
 import org.springframework.stereotype.Repository;
 import repository.IContribucionesRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class ContribucionesRepository implements IContribucionesRepository {
-    private List<Contribucion> contribuciones;
+    private List<Contribucion> contribuciones = new ArrayList<>();
 
     @Override
     public void guardar(Contribucion contribucion) {
@@ -45,6 +46,11 @@ public class ContribucionesRepository implements IContribucionesRepository {
         return this.contribuciones.stream()
                 .filter(c -> filtros.stream().allMatch(f -> f.cumpleCondicion(c.getHecho())))
                 .toList();
+    }
+
+    @Override
+    public List<Contribucion> buscarTodas() {
+        return this.contribuciones;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.Date;
 
 /* podria variar si quiere: lo que paso antes de la fecha seleccionada, despues o el mismo dia */
 public class CondicionFecha implements InterfaceCondicion {
-    private Date fecha;
+    private LocalDate fecha;
 
     //Por ahora 12/06 Pensado para que sea el mismo dia
 

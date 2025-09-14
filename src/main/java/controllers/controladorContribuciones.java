@@ -29,16 +29,15 @@ public class controladorContribuciones {
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<Void> agregarArchivo(@PathVariable long id, @RequestParam ArchivoInputDTO archivo){
+    ResponseEntity<Void> agregarArchivo(@PathVariable long id, @RequestBody ArchivoInputDTO archivo){
         servicioContribucion.adjuntarArchivo(id,archivo);
         return ResponseEntity.status(200).build();
     }
 
     @GetMapping("/{id}")
     ResponseEntity<ContribucionOutputDTO> verContribucion(@PathVariable long id){
-        Contribucion c = servicioContribucion.obtener(id);
-        ContribucionOutputDTO dto = servicioContribucion.contribucionAOutputDTO(c);
-        return ResponseEntity.status(200).body(dto);
+        ContribucionOutputDTO c = servicioContribucion.obtener(id);
+        return ResponseEntity.status(200).body(c);
     }
 
 

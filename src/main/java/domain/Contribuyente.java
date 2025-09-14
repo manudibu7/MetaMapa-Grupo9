@@ -1,10 +1,13 @@
 package domain;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Contribuyente {
     private Long id;
     private String nombre;
@@ -21,17 +24,4 @@ public class Contribuyente {
         this.edad = edad;
         this.anonimo = false;
     }
-
-    public String getNombre() {return nombre;}
-    public void setNombre(String nombre) {this.nombre = nombre;}
-
-    public String getApellido() {return apellido;}
-    public void setApellido(String apellido) {this.apellido = apellido;}
-
-    public int getEdad() {return edad;}
-    public void setEdad(int edad) {this.edad = edad;}
-
-    public Boolean esAnonimo() {return anonimo;}
-    public void cambiarAnonimato(Boolean anonimo) {this.anonimo = anonimo;}
-
 }

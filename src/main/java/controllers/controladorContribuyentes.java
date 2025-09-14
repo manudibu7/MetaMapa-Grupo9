@@ -10,7 +10,7 @@ import services.ServicioContribuyente;
 
 @RestController
 @RequestMapping ("/contribuyentes")
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 public class controladorContribuyentes {
     @Autowired
     private ServicioContribuyente servicioContribuyente;
@@ -30,7 +30,7 @@ public class controladorContribuyentes {
         contribuyenteOutputDTO.setNombre(c.getNombre());
         contribuyenteOutputDTO.setApellido(c.getApellido());
         contribuyenteOutputDTO.setEdad(c.getEdad());
-        contribuyenteOutputDTO.setAnonimo(c.esAnonimo());
+        contribuyenteOutputDTO.setAnonimo(c.getAnonimo());
         return ResponseEntity.status(200).body(contribuyenteOutputDTO);
     }
 

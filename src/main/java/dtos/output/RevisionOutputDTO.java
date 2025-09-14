@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContribuyenteOutputDTO {
-    String nombre;
-    String apellido;
-    int edad;
-    boolean anonimo;
-    long id;
+public class RevisionOutputDTO {
+    Long idContribucion;
+    String estado;
+    String mensaje;
+    //no hace falta el revisor?
 }

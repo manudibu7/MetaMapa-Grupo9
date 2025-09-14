@@ -2,14 +2,19 @@ package dtos.input;
 
 import lombok.Data;
 
-import java.util.Date;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class HechoInputDTO {
     String titulo;
     String descripcion;
-    Date fecha;
+    LocalDate fecha;
     UbicacionInputDTO ubicacion;
     // el adjunto se agrega despues
     // fechaDeCarga se completa cuando se sube a la bbdd central
