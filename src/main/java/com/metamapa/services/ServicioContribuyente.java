@@ -18,25 +18,25 @@ public class ServicioContribuyente {
         if (contribuyenteInputDTO == null) {
             throw new DatosInvalidosException("Los datos del contribuyente no pueden ser nulos");
         }
-
+        
         // Validar edad si se proporciona
         if (contribuyenteInputDTO.getEdad() != null) {
             if (contribuyenteInputDTO.getEdad() < 0 || contribuyenteInputDTO.getEdad() > 150) {
                 throw new DatosInvalidosException("La edad debe estar entre 0 y 150 años");
             }
         }
-
+        
         // Validar que si proporciona nombre o apellido, ambos deben estar presentes
         boolean tieneNombre = contribuyenteInputDTO.getNombre() != null && !contribuyenteInputDTO.getNombre().trim().isEmpty();
         boolean tieneApellido = contribuyenteInputDTO.getApellido() != null && !contribuyenteInputDTO.getApellido().trim().isEmpty();
-
+        
         if (tieneNombre && !tieneApellido) {
             throw new DatosInvalidosException("Si proporciona nombre, debe proporcionar también el apellido");
         }
         if (!tieneNombre && tieneApellido) {
             throw new DatosInvalidosException("Si proporciona apellido, debe proporcionar también el nombre");
         }
-
+        
         Contribuyente nuevo = new Contribuyente(contribuyenteInputDTO.getNombre(),
                                                 contribuyenteInputDTO.getApellido(),
                                                 contribuyenteInputDTO.getEdad());
@@ -51,7 +51,7 @@ public class ServicioContribuyente {
         if (id == null || id <= 0) {
             throw new DatosInvalidosException("El ID del contribuyente debe ser un número positivo");
         }
-
+        
         return repositorio.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + id));
     }
