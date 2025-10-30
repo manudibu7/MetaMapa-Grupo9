@@ -31,7 +31,7 @@ class ControladorContribuyentesTest {
 
     @Test
     void testAgregarContribuyente_DeberiaRetornar201YElId() throws Exception {
-        // Arrange
+        // preparo los datos de entrada
         ContribuyenteInputDTO inputDTO = new ContribuyenteInputDTO(
             "Juan",
             "Pérez",
@@ -43,7 +43,7 @@ class ControladorContribuyentesTest {
         when(servicioContribuyente.registrarContribuyente(any(ContribuyenteInputDTO.class)))
             .thenReturn(idEsperado);
 
-        // Act & Assert
+        // ejecuto y verifico
         mockMvc.perform(post("/contribuyentes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
@@ -53,7 +53,7 @@ class ControladorContribuyentesTest {
 
     @Test
     void testAgregarContribuyenteAnonimo_DeberiaRetornar201() throws Exception {
-        // Arrange
+        // preparo un contribuyente anonimo
         ContribuyenteInputDTO inputDTO = new ContribuyenteInputDTO(
             null,
             null,
@@ -65,7 +65,7 @@ class ControladorContribuyentesTest {
         when(servicioContribuyente.registrarContribuyente(any(ContribuyenteInputDTO.class)))
             .thenReturn(idEsperado);
 
-        // Act & Assert
+        // ejecuto y verifico
         mockMvc.perform(post("/contribuyentes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
@@ -75,7 +75,7 @@ class ControladorContribuyentesTest {
 
     @Test
     void testObtenerContribuyente_DeberiaRetornar200YElContribuyente() throws Exception {
-        // Arrange
+        // preparo un contribuyente de respuesta
         Long id = 1L;
         var contribuyente = new com.metamapa.domain.Contribuyente();
         contribuyente.setId(id);
@@ -87,7 +87,7 @@ class ControladorContribuyentesTest {
         when(servicioContribuyente.buscarContribuyente(id))
             .thenReturn(contribuyente);
 
-        // Act & Assert
+        // ejecuto y verifico
         mockMvc.perform(get("/contribuyentes/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -99,31 +99,31 @@ class ControladorContribuyentesTest {
 
     @Test
     void testObtenerContribuyenteInexistente_DeberiaRetornar404() throws Exception {
-        // Arrange
+        // simulo que no existe el contribuyente
         Long id = 999L;
         when(servicioContribuyente.buscarContribuyente(id))
             .thenReturn(null);
 
-        // Act & Assert
+        // ejecuto y verifico que retorne 404
         mockMvc.perform(get("/contribuyentes/{id}", id))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testObtenerContribuyenteAnonimo_DeberiaRetornar200ConDatosAnonimos() throws Exception {
-        // Arrange
+        // preparo un contribuyente anonimo
         Long id = 3L;
         var contribuyente = new com.metamapa.domain.Contribuyente();
         contribuyente.setId(id);
-        contribuyente.setNombre(null);  // Anónimo no tiene nombre
-        contribuyente.setApellido(null);  // Anónimo no tiene apellido
-        contribuyente.setEdad(null);  // Anónimo no tiene edad
+        contribuyente.setNombre(null);  // anonimo no tiene nombre
+        contribuyente.setApellido(null);  // anonimo no tiene apellido
+        contribuyente.setEdad(null);  // anonimo no tiene edad
         contribuyente.setAnonimo(true);
         
         when(servicioContribuyente.buscarContribuyente(id))
             .thenReturn(contribuyente);
 
-        // Act & Assert
+        // ejecuto y verifico
         mockMvc.perform(get("/contribuyentes/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))

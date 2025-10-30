@@ -22,8 +22,7 @@ public class Contribuyente {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false)
-    private Integer edad;
+    private Integer edad;  // Nullable para contribuyentes anónimos
 
     @Column(nullable = false)
     private Boolean anonimo;

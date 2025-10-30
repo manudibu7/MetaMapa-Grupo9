@@ -55,4 +55,32 @@ public class ServicioContribuyente {
         return repositorio.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + id));
     }
+
+    public java.util.List<Contribuyente> listarContribuyentes(){
+        return repositorio.findAll();
+    }
+
+    public void actualizarContribuyente(Contribuyente contribuyente){
+        if (contribuyente == null || contribuyente.getId() == null) {
+            throw new DatosInvalidosException("El contribuyente y su ID no pueden ser nulos");
+        }
+
+        if (!repositorio.existsById(contribuyente.getId())) {
+            throw new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + contribuyente.getId());
+        }
+
+        repositorio.save(contribuyente);
+    }
+
+    public void eliminarContribuyente(Long id){
+        if (id == null || id <= 0) {
+            throw new DatosInvalidosException("El ID del contribuyente debe ser un número positivo");
+        }
+
+        if (!repositorio.existsById(id)) {
+            throw new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + id);
+        }
+
+        repositorio.deleteById(id);
+    }
 }

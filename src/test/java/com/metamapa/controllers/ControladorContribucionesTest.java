@@ -54,7 +54,7 @@ class ControladorContribucionesTest {
 
     @Test
     void testCrearContribucion_DeberiaRetornar201YElId() throws Exception {
-        // Arrange
+        // preparo los datos de entrada
         UbicacionInputDTO ubicacion = new UbicacionInputDTO(-34.6037f, -58.3816f);
         HechoInputDTO hecho = new HechoInputDTO(
             "Partido Histórico",
@@ -69,7 +69,7 @@ class ControladorContribucionesTest {
         when(servicioContribuciones.crear(any(ContribucionInputDTO.class)))
             .thenReturn(idEsperado);
 
-        // Act & Assert
+        // ejecuto y verifico
         mockMvc.perform(post("/contribuciones")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
@@ -81,7 +81,6 @@ class ControladorContribucionesTest {
 
     @Test
     void testCrearContribucionSinUbicacion_DeberiaRetornar201() throws Exception {
-        // Arrange
         HechoInputDTO hecho = new HechoInputDTO(
             "Evento Sin Ubicación",
             "Descripción del evento",
@@ -95,7 +94,6 @@ class ControladorContribucionesTest {
         when(servicioContribuciones.crear(any(ContribucionInputDTO.class)))
             .thenReturn(idEsperado);
 
-        // Act & Assert
         mockMvc.perform(post("/contribuciones")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
@@ -105,7 +103,6 @@ class ControladorContribucionesTest {
 
     @Test
     void testEditarContribucion_DeberiaRetornar200() throws Exception {
-        // Arrange
         Long id = 10L;
         UbicacionInputDTO ubicacion = new UbicacionInputDTO(-34.5f, -58.4f);
         HechoInputDTO hechoEditado = new HechoInputDTO(
@@ -119,7 +116,6 @@ class ControladorContribucionesTest {
 
         doNothing().when(servicioContribuciones).editar(eq(id), any(HechoInputDTO.class));
 
-        // Act & Assert
         mockMvc.perform(put("/contribuciones/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
@@ -130,7 +126,6 @@ class ControladorContribucionesTest {
 
     @Test
     void testAgregarArchivo_DeberiaRetornar200() throws Exception {
-        // Arrange
         Long id = 10L;
         ArchivoInputDTO archivo = new ArchivoInputDTO(
             1L,
@@ -140,7 +135,7 @@ class ControladorContribucionesTest {
 
         doNothing().when(servicioContribuciones).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
 
-        // Act & Assert
+
         mockMvc.perform(patch("/contribuciones/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivo)))
@@ -151,7 +146,6 @@ class ControladorContribucionesTest {
 
     @Test
     void testVerContribucion_DeberiaRetornar200YLaContribucion() throws Exception {
-        // Arrange
         Long id = 10L;
         
         HechoOutputDTO hecho = new HechoOutputDTO();
@@ -168,7 +162,7 @@ class ControladorContribucionesTest {
         when(servicioContribuciones.obtener(id))
             .thenReturn(outputDTO);
 
-        // Act & Assert
+
         mockMvc.perform(get("/contribuciones/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idContribucion").value(id))
@@ -181,7 +175,7 @@ class ControladorContribucionesTest {
 
     @Test
     void testAgregarArchivoMultimedia_DeberiaRetornar200() throws Exception {
-        // Arrange
+
         Long id = 15L;
         ArchivoInputDTO archivoVideo = new ArchivoInputDTO(
             2L,
@@ -191,7 +185,7 @@ class ControladorContribucionesTest {
 
         doNothing().when(servicioContribuciones).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
 
-        // Act & Assert
+
         mockMvc.perform(patch("/contribuciones/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivoVideo)))
