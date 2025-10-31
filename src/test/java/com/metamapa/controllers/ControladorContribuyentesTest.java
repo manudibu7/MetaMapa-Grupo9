@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ControladorContribuyentesTest {
 
     @Autowired
@@ -40,15 +42,31 @@ class ControladorContribuyentesTest {
         );
         Long idEsperado = 1L;
         
+        // mockeo el servicio para que retorne el id
         when(servicioContribuyente.registrarContribuyente(any(ContribuyenteInputDTO.class)))
             .thenReturn(idEsperado);
+
+        // mockeo buscarContribuyente para que retorne el contribuyente completo
+        var contribuyente = new com.metamapa.domain.Contribuyente();
+        contribuyente.setId(idEsperado);
+        contribuyente.setNombre("Juan");
+        contribuyente.setApellido("Pérez");
+        contribuyente.setEdad(30);
+        contribuyente.setAnonimo(false);
+
+        when(servicioContribuyente.buscarContribuyente(idEsperado))
+            .thenReturn(contribuyente);
 
         // ejecuto y verifico
         mockMvc.perform(post("/contribuyentes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(idEsperado.toString()));
+                .andExpect(jsonPath("$.id").value(idEsperado))
+                .andExpect(jsonPath("$.nombre").value("Juan"))
+                .andExpect(jsonPath("$.apellido").value("Pérez"))
+                .andExpect(jsonPath("$.edad").value(30))
+                .andExpect(jsonPath("$.anonimo").value(false));
     }
 
     @Test
@@ -62,15 +80,28 @@ class ControladorContribuyentesTest {
         );
         Long idEsperado = 2L;
         
+        // mockeo el servicio para que retorne el id
         when(servicioContribuyente.registrarContribuyente(any(ContribuyenteInputDTO.class)))
             .thenReturn(idEsperado);
+
+        // mockeo buscarContribuyente para que retorne el contribuyente anonimo completo
+        var contribuyente = new com.metamapa.domain.Contribuyente();
+        contribuyente.setId(idEsperado);
+        contribuyente.setNombre(null);
+        contribuyente.setApellido(null);
+        contribuyente.setEdad(null);
+        contribuyente.setAnonimo(true);
+
+        when(servicioContribuyente.buscarContribuyente(idEsperado))
+            .thenReturn(contribuyente);
 
         // ejecuto y verifico
         mockMvc.perform(post("/contribuyentes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(idEsperado.toString()));
+                .andExpect(jsonPath("$.id").value(idEsperado))
+                .andExpect(jsonPath("$.anonimo").value(true));
     }
 
     @Test
