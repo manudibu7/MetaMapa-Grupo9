@@ -89,25 +89,28 @@ class ExportacionControllerTest {
         hecho1.setFecha(LocalDate.of(2022, 12, 18));
         hecho1.setCategoria("Deportes");
         hecho1.setUbicacion(new UbicacionOutputDTO(-25.2637f, 51.5328f));
-        
+        hecho1.setTipoDeHecho("MULTIMEDIA");
+
         AdjuntoOutputDTO adjunto = new AdjuntoOutputDTO(1L, "http://example.com/imagen.jpg", "image/jpeg");
-        hecho1.setAdjunto(adjunto);
-        
+        hecho1.setAdjuntos(Arrays.asList(adjunto));
+
         HechoOutputDTO hecho2 = new HechoOutputDTO();
         hecho2.setTitulo("Conferencia");
         hecho2.setDescripcion("Conferencia sobre IA");
         hecho2.setFecha(LocalDate.of(2024, 3, 15));
         hecho2.setCategoria("Tecnología");
         hecho2.setUbicacion(new UbicacionOutputDTO(-34.6f, -58.4f));
-        hecho2.setAdjunto(null); // Sin adjunto
-        
+        hecho2.setAdjuntos(null); // Sin adjuntos
+        hecho2.setTipoDeHecho("TEXTO");
+
         HechoOutputDTO hecho3 = new HechoOutputDTO();
         hecho3.setTitulo("Evento Cultural");
         hecho3.setDescripcion("Festival de música");
         hecho3.setFecha(LocalDate.of(2024, 7, 20));
         hecho3.setCategoria("Cultura");
         hecho3.setUbicacion(null); // Sin ubicación
-        
+        hecho3.setTipoDeHecho("TEXTO");
+
         List<HechoOutputDTO> hechos = Arrays.asList(hecho1, hecho2, hecho3);
         
         when(bandejaDeSalida.pendientesDeEnvio())
@@ -119,10 +122,12 @@ class ExportacionControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].titulo").value("Partido de Fútbol"))
-                .andExpect(jsonPath("$[0].adjunto").exists())
-                .andExpect(jsonPath("$[0].adjunto.url").value("http://example.com/imagen.jpg"))
+                .andExpect(jsonPath("$[0].adjuntos").exists())
+                .andExpect(jsonPath("$[0].adjuntos[0].url").value("http://example.com/imagen.jpg"))
+                .andExpect(jsonPath("$[0].tipoDeHecho").value("MULTIMEDIA"))
                 .andExpect(jsonPath("$[1].titulo").value("Conferencia"))
-                .andExpect(jsonPath("$[1].adjunto").doesNotExist())
+                .andExpect(jsonPath("$[1].adjuntos").doesNotExist())
+                .andExpect(jsonPath("$[1].tipoDeHecho").value("TEXTO"))
                 .andExpect(jsonPath("$[2].titulo").value("Evento Cultural"))
                 .andExpect(jsonPath("$[2].ubicacion").doesNotExist());
 
@@ -160,13 +165,14 @@ class ExportacionControllerTest {
         hecho.setDescripcion("Descripción completa del evento");
         hecho.setFecha(LocalDate.of(2024, 10, 28));
         hecho.setCategoria("Historia");
-        
+        hecho.setTipoDeHecho("MULTIMEDIA");
+
         UbicacionOutputDTO ubicacion = new UbicacionOutputDTO(-34.6037f, -58.3816f);
         hecho.setUbicacion(ubicacion);
         
         AdjuntoOutputDTO adjunto = new AdjuntoOutputDTO(5L, "http://example.com/video.mp4", "video/mp4");
-        hecho.setAdjunto(adjunto);
-        
+        hecho.setAdjuntos(Arrays.asList(adjunto));
+
         when(bandejaDeSalida.pendientesDeEnvio())
             .thenReturn(List.of(hecho));
 
@@ -179,9 +185,10 @@ class ExportacionControllerTest {
                 .andExpect(jsonPath("$[0].categoria").value("Historia"))
                 .andExpect(jsonPath("$[0].ubicacion.latitud").value(-34.6037))
                 .andExpect(jsonPath("$[0].ubicacion.longitud").value(-58.3816))
-                .andExpect(jsonPath("$[0].adjunto.id").value(5))
-                .andExpect(jsonPath("$[0].adjunto.url").value("http://example.com/video.mp4"))
-                .andExpect(jsonPath("$[0].adjunto.tipo").value("video/mp4"));
+                .andExpect(jsonPath("$[0].adjuntos[0].id").value(5))
+                .andExpect(jsonPath("$[0].adjuntos[0].url").value("http://example.com/video.mp4"))
+                .andExpect(jsonPath("$[0].adjuntos[0].tipo").value("video/mp4"))
+                .andExpect(jsonPath("$[0].tipoDeHecho").value("MULTIMEDIA"));
 
         verify(bandejaDeSalida, times(1)).pendientesDeEnvio();
         verify(bandejaDeSalida, times(1)).limpiar();

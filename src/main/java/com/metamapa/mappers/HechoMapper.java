@@ -9,6 +9,8 @@ import com.metamapa.dtos.output.UbicacionOutputDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class HechoMapper {
@@ -21,18 +23,28 @@ public class HechoMapper {
         dto.setDescripcion(hecho.getDescripcion());
         dto.setFecha(LocalDate.parse(hecho.getFecha().toString()));
         dto.setCategoria(hecho.getCategoria().getNombre());
-        if (hecho.getAdjunto() != null){
-            AdjuntoOutputDTO adjuntoDto = new AdjuntoOutputDTO();
-            adjuntoDto.setUrl(hecho.getAdjunto().getUrl());
-            adjuntoDto.setTipo(hecho.getAdjunto().getTipo().toString());
-            dto.setAdjunto(adjuntoDto);
+        dto.setTipoDeHecho(hecho.getTipoDeHecho().toString());
+
+        if (hecho.getAdjuntos() != null && !hecho.getAdjuntos().isEmpty()){
+            List<AdjuntoOutputDTO> adjuntosDtos = hecho.getAdjuntos().stream()
+                .map(archivo -> {
+                    AdjuntoOutputDTO adjuntoDto = new AdjuntoOutputDTO();
+                    adjuntoDto.setUrl(archivo.getUrl());
+                    adjuntoDto.setTipo(archivo.getTipo().toString());
+                    adjuntoDto.setId(archivo.getId());
+                    return adjuntoDto;
+                })
+                .collect(Collectors.toList());
+            dto.setAdjuntos(adjuntosDtos);
         }
-        UbicacionOutputDTO ubicacionDto= new UbicacionOutputDTO();
+
+        UbicacionOutputDTO ubicacionDto = new UbicacionOutputDTO();
         ubicacionDto.setLatitud(hecho.getLugarDeOcurrencia().getLatitud());
         ubicacionDto.setLongitud(hecho.getLugarDeOcurrencia().getLongitud());
         dto.setUbicacion(ubicacionDto);
         return dto;
     }
+
     public Hecho hechoDtoToHecho(HechoInputDTO dto){
         Hecho hecho = new Hecho();
         hecho.setTitulo(dto.getTitulo());

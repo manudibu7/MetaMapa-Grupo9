@@ -96,7 +96,7 @@ public class ServicioContribuciones {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Contribución no encontrada con ID: " + idContribucion));
 
         Archivo archivo = archivoMapper.archivoDtoToArchivo(dto);
-        contribucion.getHecho().setAdjunto(archivo);
+        contribucion.getHecho().agregarAdjunto(archivo);
         repositorio.save(contribucion);
     }
 

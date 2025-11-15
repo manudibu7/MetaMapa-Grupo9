@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Getter
 @Setter
@@ -35,7 +34,33 @@ public class Hecho {
     private Ubicacion lugarDeOcurrencia;
     private String origen;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "archivo_id")
-    private Archivo adjunto;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hecho")
+    private List<Archivo> adjuntos = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_de_hecho", nullable = false)
+    private TipoDeHecho tipoDeHecho = TipoDeHecho.TEXTO;
+
+    // Método para agregar un adjunto y cambiar el tipo a MULTIMEDIA
+    public void agregarAdjunto(Archivo archivo) {
+        if (archivo != null) {
+            adjuntos.add(archivo);
+            archivo.setHecho(this);
+            this.tipoDeHecho = TipoDeHecho.MULTIMEDIA;
+        }
+    }
+
+    // Método para establecer los adjuntos y actualizar el tipo
+    public void setAdjuntos(List<Archivo> adjuntos) {
+        this.adjuntos = adjuntos != null ? adjuntos : new ArrayList<>();
+        if (this.adjuntos.isEmpty()) {
+            this.tipoDeHecho = TipoDeHecho.TEXTO;
+        } else {
+            this.tipoDeHecho = TipoDeHecho.MULTIMEDIA;
+            // Asegurar la relación bidireccional
+            for (Archivo archivo : this.adjuntos) {
+                archivo.setHecho(this);
+            }
+        }
+    }
 }

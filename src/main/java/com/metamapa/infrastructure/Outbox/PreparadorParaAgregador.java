@@ -8,6 +8,9 @@ import com.metamapa.dtos.output.HechoOutputDTO;
 import com.metamapa.dtos.output.UbicacionOutputDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class PreparadorParaAgregador {
 
@@ -19,20 +22,27 @@ public class PreparadorParaAgregador {
         ubicacionDTO.setLatitud(u.getLatitud());
         ubicacionDTO.setLongitud(u.getLongitud());
 
-        AdjuntoOutputDTO adjuntoDTO = null;
-        if(hecho.getAdjunto() != null) {
-            adjuntoDTO = new AdjuntoOutputDTO();
-            adjuntoDTO.setId(hecho.getAdjunto().getId());
-            adjuntoDTO.setTipo(hecho.getAdjunto().getTipo().toString());
-            adjuntoDTO.setUrl(hecho.getAdjunto().getUrl());
+        List<AdjuntoOutputDTO> adjuntosDTO = null;
+        if(hecho.getAdjuntos() != null && !hecho.getAdjuntos().isEmpty()) {
+            adjuntosDTO = hecho.getAdjuntos().stream()
+                .map(archivo -> {
+                    AdjuntoOutputDTO adjuntoDTO = new AdjuntoOutputDTO();
+                    adjuntoDTO.setId(archivo.getId());
+                    adjuntoDTO.setTipo(archivo.getTipo().toString());
+                    adjuntoDTO.setUrl(archivo.getUrl());
+                    return adjuntoDTO;
+                })
+                .collect(Collectors.toList());
         }
+
         HechoOutputDTO dto = new HechoOutputDTO();
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setFecha(hecho.getFecha());
         dto.setUbicacion(ubicacionDTO);
         dto.setCategoria(hecho.getCategoria().getNombre());
-        dto.setAdjunto(adjuntoDTO);
+        dto.setAdjuntos(adjuntosDTO);
+        dto.setTipoDeHecho(hecho.getTipoDeHecho().toString());
 
         return dto;
     }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,5 +16,6 @@ public class HechoOutputDTO {
     LocalDate fecha;
     UbicacionOutputDTO ubicacion;
     String categoria;
-    AdjuntoOutputDTO adjunto; // puede tener varios adjunto
+    List<AdjuntoOutputDTO> adjuntos; // lista de adjuntos
+    String tipoDeHecho; // TEXTO o MULTIMEDIA
 }

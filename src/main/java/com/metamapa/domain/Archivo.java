@@ -27,6 +27,10 @@ public class Archivo {
     @Column
     String tamanio;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hecho_id")
+    private Hecho hecho;
+
     public void setTipoFromString(String tipo) {
         this.tipo = TipoMedia.valueOf(tipo.toUpperCase());
     }

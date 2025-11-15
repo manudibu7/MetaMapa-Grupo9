@@ -40,9 +40,17 @@ public class ServicioContribuyente {
         Contribuyente nuevo = new Contribuyente(contribuyenteInputDTO.getNombre(),
                                                 contribuyenteInputDTO.getApellido(),
                                                 contribuyenteInputDTO.getEdad());
-        if(contribuyenteInputDTO.getNombre() == null && contribuyenteInputDTO.getApellido() == null){
-            nuevo.setAnonimo(true);
+        // establecer anonimo: true si el DTO pide anonimo o si no hay nombre ni apellido (nulos o vacios)
+        boolean forzarAnonimoPorCamposVacíos = !tieneNombre && !tieneApellido;
+        boolean anonimoSolicitado = false;
+        try {
+            // lombok genera isAnonimo() para boolean primitives
+            anonimoSolicitado = contribuyenteInputDTO.isAnonimo();
+        } catch (Exception e) {
+            // por seguridad, si no existe el metodo isAnonimo(), ignorar y usar default false
         }
+        nuevo.setAnonimo(anonimoSolicitado || forzarAnonimoPorCamposVacíos);
+
         repositorio.save(nuevo);
         return nuevo.getId();
     }
@@ -64,11 +72,11 @@ public class ServicioContribuyente {
         if (contribuyente == null || contribuyente.getId() == null) {
             throw new DatosInvalidosException("El contribuyente y su ID no pueden ser nulos");
         }
-
+        
         if (!repositorio.existsById(contribuyente.getId())) {
             throw new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + contribuyente.getId());
         }
-
+        
         repositorio.save(contribuyente);
     }
 
@@ -76,11 +84,11 @@ public class ServicioContribuyente {
         if (id == null || id <= 0) {
             throw new DatosInvalidosException("El ID del contribuyente debe ser un número positivo");
         }
-
+        
         if (!repositorio.existsById(id)) {
             throw new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + id);
         }
-
+        
         repositorio.deleteById(id);
     }
 }

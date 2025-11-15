@@ -340,5 +340,178 @@ class IContribucionesRepositoryIntegrationTest {
 
         return contribucion;
     }
+
+    /**
+     * Test: TIPO DE HECHO - Un hecho nuevo debería ser de tipo TEXTO por defecto
+     */
+    @Test
+    void testTipoDeHecho_DeberiaSerTextoInicial() {
+        // Arrange
+        Contribucion contribucion = crearContribucionCompleta();
+
+        // Act
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+
+        // Assert
+        assertThat(guardada.getHecho().getTipoDeHecho()).isEqualTo(TipoDeHecho.TEXTO);
+        assertThat(guardada.getHecho().getAdjuntos()).isEmpty();
+    }
+
+    /**
+     * Test: AGREGAR UN ADJUNTO - Debería cambiar el tipo a MULTIMEDIA
+     */
+    @Test
+    void testAgregarAdjunto_DeberiaCambiarATipoMultimedia() {
+        // Arrange
+        Contribucion contribucion = crearContribucionCompleta();
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+
+        // Act - Agregar un adjunto
+        Archivo archivo = new Archivo();
+        archivo.setUrl("http://example.com/imagen.jpg");
+        archivo.setTipo(TipoMedia.IMAGEN);
+        archivo.setTamanio("2MB");
+
+        guardada.getHecho().agregarAdjunto(archivo);
+        Contribucion actualizada = contribucionesRepository.save(guardada);
+
+        // Assert
+        assertThat(actualizada.getHecho().getTipoDeHecho()).isEqualTo(TipoDeHecho.MULTIMEDIA);
+        assertThat(actualizada.getHecho().getAdjuntos()).hasSize(1);
+        assertThat(actualizada.getHecho().getAdjuntos().get(0).getUrl()).isEqualTo("http://example.com/imagen.jpg");
+        assertThat(actualizada.getHecho().getAdjuntos().get(0).getTipo()).isEqualTo(TipoMedia.IMAGEN);
+    }
+
+    /**
+     * Test: MÚLTIPLES ADJUNTOS - Un hecho puede tener varios archivos adjuntos
+     */
+    @Test
+    void testMultiplesAdjuntos_DeberiaGuardarTodos() {
+        // Arrange
+        Contribucion contribucion = crearContribucionCompleta();
+
+        Archivo archivo1 = new Archivo();
+        archivo1.setUrl("http://example.com/imagen1.jpg");
+        archivo1.setTipo(TipoMedia.IMAGEN);
+        archivo1.setTamanio("1MB");
+
+        Archivo archivo2 = new Archivo();
+        archivo2.setUrl("http://example.com/video.mp4");
+        archivo2.setTipo(TipoMedia.VIDEO);
+        archivo2.setTamanio("50MB");
+
+        Archivo archivo3 = new Archivo();
+        archivo3.setUrl("http://example.com/audio.mp3");
+        archivo3.setTipo(TipoMedia.AUDIO);
+        archivo3.setTamanio("5MB");
+
+        // Act - Agregar múltiples adjuntos
+        contribucion.getHecho().agregarAdjunto(archivo1);
+        contribucion.getHecho().agregarAdjunto(archivo2);
+        contribucion.getHecho().agregarAdjunto(archivo3);
+
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+
+        // Assert
+        assertThat(guardada.getHecho().getTipoDeHecho()).isEqualTo(TipoDeHecho.MULTIMEDIA);
+        assertThat(guardada.getHecho().getAdjuntos()).hasSize(3);
+
+        // Verificar que se guardaron todos los adjuntos
+        List<Archivo> adjuntos = guardada.getHecho().getAdjuntos();
+        assertThat(adjuntos).extracting(Archivo::getTipo)
+                .containsExactlyInAnyOrder(TipoMedia.IMAGEN, TipoMedia.VIDEO, TipoMedia.AUDIO);
+
+        // Verificar la relación bidireccional
+        assertThat(adjuntos).allMatch(a -> a.getHecho().equals(guardada.getHecho()));
+    }
+
+    /**
+     * Test: ORPHAN REMOVAL ADJUNTOS - Los adjuntos deben eliminarse con el hecho
+     */
+    @Test
+    void testEliminarHecho_DeberiaEliminarAdjuntosEnCascada() {
+        // Arrange
+        Contribucion contribucion = crearContribucionCompleta();
+
+        Archivo archivo1 = new Archivo();
+        archivo1.setUrl("http://example.com/imagen.jpg");
+        archivo1.setTipo(TipoMedia.IMAGEN);
+
+        Archivo archivo2 = new Archivo();
+        archivo2.setUrl("http://example.com/video.mp4");
+        archivo2.setTipo(TipoMedia.VIDEO);
+
+        contribucion.getHecho().agregarAdjunto(archivo1);
+        contribucion.getHecho().agregarAdjunto(archivo2);
+
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+        Long contribucionId = guardada.getId();
+
+        // Act - Eliminar la contribución
+        contribucionesRepository.deleteById(contribucionId);
+        contribucionesRepository.flush();
+
+        // Assert - La contribución no debe existir
+        assertThat(contribucionesRepository.findById(contribucionId)).isEmpty();
+        // Los adjuntos deberían eliminarse en cascada (orphanRemoval = true)
+    }
+
+    /**
+     * Test: PERSISTENCIA DE ADJUNTOS - Verificar que al recuperar se cargan los adjuntos
+     */
+    @Test
+    void testRecuperarContribucion_DeberiaCargarAdjuntos() {
+        // Arrange
+        Contribucion contribucion = crearContribucionCompleta();
+
+        Archivo archivo1 = new Archivo();
+        archivo1.setUrl("http://example.com/documento.pdf");
+        archivo1.setTipo(TipoMedia.TEXTO);
+
+        contribucion.getHecho().agregarAdjunto(archivo1);
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+        Long id = guardada.getId();
+
+        // Act - Limpiar el contexto y recuperar
+        contribucionesRepository.flush();
+        Optional<Contribucion> recuperada = contribucionesRepository.findById(id);
+
+        // Assert
+        assertThat(recuperada).isPresent();
+        assertThat(recuperada.get().getHecho().getAdjuntos()).hasSize(1);
+        assertThat(recuperada.get().getHecho().getTipoDeHecho()).isEqualTo(TipoDeHecho.MULTIMEDIA);
+    }
+
+    /**
+     * Test: ACTUALIZAR ADJUNTOS - Agregar más adjuntos a un hecho existente
+     */
+    @Test
+    void testActualizarAdjuntos_DeberiaAgregarNuevosAdjuntos() {
+        // Arrange - Crear contribución con un adjunto
+        Contribucion contribucion = crearContribucionCompleta();
+
+        Archivo archivo1 = new Archivo();
+        archivo1.setUrl("http://example.com/imagen1.jpg");
+        archivo1.setTipo(TipoMedia.IMAGEN);
+
+        contribucion.getHecho().agregarAdjunto(archivo1);
+        Contribucion guardada = contribucionesRepository.save(contribucion);
+
+        // Act - Agregar otro adjunto
+        Archivo archivo2 = new Archivo();
+        archivo2.setUrl("http://example.com/imagen2.jpg");
+        archivo2.setTipo(TipoMedia.IMAGEN);
+
+        guardada.getHecho().agregarAdjunto(archivo2);
+        Contribucion actualizada = contribucionesRepository.save(guardada);
+
+        // Assert
+        assertThat(actualizada.getHecho().getAdjuntos()).hasSize(2);
+        assertThat(actualizada.getHecho().getAdjuntos())
+                .extracting(Archivo::getUrl)
+                .containsExactlyInAnyOrder("http://example.com/imagen1.jpg", "http://example.com/imagen2.jpg");
+    }
 }
+
+
 
