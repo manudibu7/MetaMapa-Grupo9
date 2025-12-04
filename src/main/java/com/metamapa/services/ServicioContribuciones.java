@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.metamapa.repository.IContribucionesRepository;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicioContribuciones {
@@ -28,6 +30,56 @@ public class ServicioContribuciones {
     private HechoMapper hechoMapper = new HechoMapper();
     private ArchivoMapper archivoMapper = new ArchivoMapper();
     private ContribucionMapper contribucionMapper = new ContribucionMapper();
+
+    /**
+     * Obtiene todas las contribuciones de un contribuyente por su ID interno.
+     * @param contribuyenteId ID interno del contribuyente
+     * @return Lista de ContribucionOutputDTO del contribuyente
+     * @throws DatosInvalidosException si el ID es null o inválido
+     * @throws RecursoNoEncontradoException si el contribuyente no existe
+     */
+    public List<ContribucionOutputDTO> obtenerContribucionesPorContribuyente(Long contribuyenteId) {
+        if (contribuyenteId == null || contribuyenteId <= 0) {
+            throw new DatosInvalidosException("El ID del contribuyente debe ser un número positivo");
+        }
+
+        // Verificar que el contribuyente existe
+        servicioContribuyente.buscarContribuyente(contribuyenteId);
+
+        List<Contribucion> contribuciones = repositorio.findByContribuyenteId(contribuyenteId);
+
+        return contribuciones.stream()
+                .map(contribucionMapper::contribucionToOutputDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtiene todas las contribuciones de un contribuyente por su keycloakId.
+     * @param keycloakId ID externo de Keycloak del contribuyente
+     * @return Lista de ContribucionOutputDTO del contribuyente
+     * @throws DatosInvalidosException si el keycloakId es null o vacío
+     * @throws RecursoNoEncontradoException si no se encuentra el contribuyente
+     */
+    public List<ContribucionOutputDTO> obtenerContribucionesPorKeycloakId(String keycloakId) {
+        if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            throw new DatosInvalidosException("El keycloakId es obligatorio y no puede estar vacío");
+        }
+
+        List<Contribucion> contribuciones = repositorio.findByContribuyenteKeycloakId(keycloakId);
+
+        // Si no hay contribuciones, verificamos si el contribuyente existe
+        if (contribuciones.isEmpty()) {
+            // Esto lanzará RecursoNoEncontradoException si el contribuyente no existe
+            var contribuyente = servicioContribuyente.buscarContribuyentePorKeycloakId(keycloakId);
+            if (contribuyente == null) {
+                throw new RecursoNoEncontradoException("Contribuyente no encontrado con keycloakId: " + keycloakId);
+            }
+        }
+
+        return contribuciones.stream()
+                .map(contribucionMapper::contribucionToOutputDTO)
+                .collect(Collectors.toList());
+    }
 
     public Long crear(ContribucionInputDTO contribucionInputDTO){
         // Validaciones

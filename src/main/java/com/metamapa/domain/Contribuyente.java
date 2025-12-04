@@ -16,6 +16,13 @@ public class Contribuyente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * ID externo proveniente de Keycloak.
+     * Puede ser null inicialmente, pero una vez asignado identifica unívocamente al contribuyente.
+     */
+    @Column(unique = true)
+    private String keycloakId;
+
     @Column(nullable = false)
     private String nombre;
 

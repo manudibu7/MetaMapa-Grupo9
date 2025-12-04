@@ -12,6 +12,12 @@ import java.util.List;
 
 @Repository
 public interface IContribucionesRepository extends JpaRepository<Contribucion, Long>  {
+
+
+    List<Contribucion> findByContribuyenteId(Long contribuyenteId);
+
+    List<Contribucion> findByContribuyenteKeycloakId(String keycloakId);
+
     /*
     public void guardar(Contribucion contribucion);
     public Contribucion buscarPorId(Long id);

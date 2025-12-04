@@ -9,6 +9,8 @@ import com.metamapa.dtos.input.UbicacionInputDTO;
 import com.metamapa.dtos.output.ContribucionOutputDTO;
 import com.metamapa.dtos.output.HechoOutputDTO;
 import com.metamapa.dtos.output.UbicacionOutputDTO;
+import com.metamapa.exceptions.DatosInvalidosException;
+import com.metamapa.exceptions.RecursoNoEncontradoException;
 import com.metamapa.services.ServicioContribuciones;
 import com.metamapa.services.ServicioContribuyente;
 import com.metamapa.services.ServicioRevisiones;
@@ -23,6 +25,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -194,5 +199,171 @@ class ControladorContribucionesTest {
                 .andExpect(status().isOk());
 
         verify(servicioContribuciones, times(1)).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
+    }
+
+    // =====================================================================
+    // TESTS PARA OBTENER CONTRIBUCIONES POR CONTRIBUYENTE
+    // =====================================================================
+
+    @Test
+    void testObtenerContribucionesPorContribuyente_DeberiaRetornar200YLista() throws Exception {
+        Long contribuyenteId = 1L;
+
+        // Crear contribuciones de prueba
+        HechoOutputDTO hecho1 = new HechoOutputDTO();
+        hecho1.setTitulo("Contribución 1");
+        hecho1.setDescripcion("Descripción 1");
+        hecho1.setFecha(LocalDate.of(2023, 1, 15));
+        hecho1.setCategoria("Historia");
+
+        HechoOutputDTO hecho2 = new HechoOutputDTO();
+        hecho2.setTitulo("Contribución 2");
+        hecho2.setDescripcion("Descripción 2");
+        hecho2.setFecha(LocalDate.of(2023, 2, 20));
+        hecho2.setCategoria("Cultura");
+
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 10L);
+        ContribucionOutputDTO contribucion2 = new ContribucionOutputDTO(contribuyenteId, hecho2, 11L);
+
+        List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1, contribucion2);
+
+        when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteId))
+            .thenReturn(contribuciones);
+
+        mockMvc.perform(get("/contribuciones/contribuyente/{contribuyenteId}", contribuyenteId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].idContribucion").value(10))
+                .andExpect(jsonPath("$[0].hecho.titulo").value("Contribución 1"))
+                .andExpect(jsonPath("$[1].idContribucion").value(11))
+                .andExpect(jsonPath("$[1].hecho.titulo").value("Contribución 2"));
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorContribuyente(contribuyenteId);
+    }
+
+    @Test
+    void testObtenerContribucionesPorContribuyente_SinContribuciones_DeberiaRetornarListaVacia() throws Exception {
+        Long contribuyenteId = 2L;
+
+        when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteId))
+            .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/contribuciones/contribuyente/{contribuyenteId}", contribuyenteId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorContribuyente(contribuyenteId);
+    }
+
+    @Test
+    void testObtenerContribucionesPorContribuyente_ContribuyenteNoExiste_DeberiaRetornar404() throws Exception {
+        Long contribuyenteIdInexistente = 999L;
+
+        when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteIdInexistente))
+            .thenThrow(new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + contribuyenteIdInexistente));
+
+        mockMvc.perform(get("/contribuciones/contribuyente/{contribuyenteId}", contribuyenteIdInexistente))
+                .andExpect(status().isNotFound());
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorContribuyente(contribuyenteIdInexistente);
+    }
+
+    @Test
+    void testObtenerContribucionesPorKeycloakId_DeberiaRetornar200YLista() throws Exception {
+        String keycloakId = "keycloak-user-123";
+        Long contribuyenteId = 1L;
+
+        // Crear contribuciones de prueba
+        HechoOutputDTO hecho1 = new HechoOutputDTO();
+        hecho1.setTitulo("Contribución Keycloak 1");
+        hecho1.setDescripcion("Descripción desde Keycloak");
+        hecho1.setFecha(LocalDate.of(2023, 3, 10));
+        hecho1.setCategoria("Tecnología");
+
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 20L);
+
+        List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1);
+
+        when(servicioContribuciones.obtenerContribucionesPorKeycloakId(keycloakId))
+            .thenReturn(contribuciones);
+
+        mockMvc.perform(get("/contribuciones/keycloak/{keycloakId}", keycloakId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].idContribucion").value(20))
+                .andExpect(jsonPath("$[0].hecho.titulo").value("Contribución Keycloak 1"));
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorKeycloakId(keycloakId);
+    }
+
+    @Test
+    void testObtenerContribucionesPorKeycloakId_SinContribuciones_DeberiaRetornarListaVacia() throws Exception {
+        String keycloakId = "keycloak-user-456";
+
+        when(servicioContribuciones.obtenerContribucionesPorKeycloakId(keycloakId))
+            .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/contribuciones/keycloak/{keycloakId}", keycloakId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorKeycloakId(keycloakId);
+    }
+
+    @Test
+    void testObtenerContribucionesPorKeycloakId_KeycloakIdNoExiste_DeberiaRetornar404() throws Exception {
+        String keycloakIdInexistente = "keycloak-inexistente-999";
+
+        when(servicioContribuciones.obtenerContribucionesPorKeycloakId(keycloakIdInexistente))
+            .thenThrow(new RecursoNoEncontradoException("Contribuyente no encontrado con keycloakId: " + keycloakIdInexistente));
+
+        mockMvc.perform(get("/contribuciones/keycloak/{keycloakId}", keycloakIdInexistente))
+                .andExpect(status().isNotFound());
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorKeycloakId(keycloakIdInexistente);
+    }
+
+    @Test
+    void testObtenerContribucionesPorContribuyente_MultipleContribuciones_DeberiaRetornarTodas() throws Exception {
+        Long contribuyenteId = 5L;
+
+        // Crear 5 contribuciones de prueba
+        HechoOutputDTO hecho1 = new HechoOutputDTO();
+        hecho1.setTitulo("Contribución A");
+        hecho1.setFecha(LocalDate.of(2023, 1, 1));
+        hecho1.setCategoria("Cat1");
+
+        HechoOutputDTO hecho2 = new HechoOutputDTO();
+        hecho2.setTitulo("Contribución B");
+        hecho2.setFecha(LocalDate.of(2023, 2, 1));
+        hecho2.setCategoria("Cat2");
+
+        HechoOutputDTO hecho3 = new HechoOutputDTO();
+        hecho3.setTitulo("Contribución C");
+        hecho3.setFecha(LocalDate.of(2023, 3, 1));
+        hecho3.setCategoria("Cat3");
+
+        List<ContribucionOutputDTO> contribuciones = Arrays.asList(
+            new ContribucionOutputDTO(contribuyenteId, hecho1, 100L),
+            new ContribucionOutputDTO(contribuyenteId, hecho2, 101L),
+            new ContribucionOutputDTO(contribuyenteId, hecho3, 102L)
+        );
+
+        when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteId))
+            .thenReturn(contribuciones);
+
+        mockMvc.perform(get("/contribuciones/contribuyente/{contribuyenteId}", contribuyenteId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].hecho.titulo").value("Contribución A"))
+                .andExpect(jsonPath("$[1].hecho.titulo").value("Contribución B"))
+                .andExpect(jsonPath("$[2].hecho.titulo").value("Contribución C"));
+
+        verify(servicioContribuciones, times(1)).obtenerContribucionesPorContribuyente(contribuyenteId);
     }
 }

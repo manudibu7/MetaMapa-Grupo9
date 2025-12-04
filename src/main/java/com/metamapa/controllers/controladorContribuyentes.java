@@ -1,7 +1,10 @@
 package com.metamapa.controllers;
 
 import com.metamapa.dtos.input.ContribuyenteInputDTO;
+import com.metamapa.dtos.input.ContribuyenteKeycloakRequest;
 import com.metamapa.dtos.output.ContribuyenteOutputDTO;
+import com.metamapa.dtos.output.ContribuyenteSistemaResponse;
+import com.metamapa.exceptions.DatosInvalidosException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,37 @@ import java.util.stream.Collectors;
 public class controladorContribuyentes {
     @Autowired
     private ServicioContribuyente servicioContribuyente;
+
+    /**
+     * Endpoint para sincronizar un contribuyente con Keycloak.
+     * Si el contribuyente ya existe (por keycloakId), lo devuelve.
+     * Si no existe, lo crea con los datos proporcionados.
+     *
+     * @param request DTO con keycloakId (obligatorio), nombre y apellido (opcionales)
+     * @return 200 OK con el contribuyente sincronizado (idSistema, keycloakId, nombre, apellido)
+     * @throws DatosInvalidosException si keycloakId es null o vacío (retorna 400)
+     */
+    @PostMapping("/sync-keycloak")
+    public ResponseEntity<ContribuyenteSistemaResponse> syncKeycloak(@RequestBody ContribuyenteKeycloakRequest request) {
+        // Validación adicional en el controller
+        if (request == null || request.getKeycloakId() == null || request.getKeycloakId().trim().isEmpty()) {
+            throw new DatosInvalidosException("El keycloakId es obligatorio y no puede estar vacío");
+        }
+
+        var contribuyente = servicioContribuyente.getOrCreateByKeycloakId(
+            request.getKeycloakId(),
+            request.getNombre(),
+            request.getApellido()
+        );
+
+        ContribuyenteSistemaResponse response = new ContribuyenteSistemaResponse();
+        response.setIdSistema(contribuyente.getId());
+        response.setKeycloakId(contribuyente.getKeycloakId());
+        response.setNombre(contribuyente.getNombre());
+        response.setApellido(contribuyente.getApellido());
+
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping
     ResponseEntity<ContribuyenteOutputDTO> agregarContribuyente(@RequestBody ContribuyenteInputDTO contribuyenteInputDTO){

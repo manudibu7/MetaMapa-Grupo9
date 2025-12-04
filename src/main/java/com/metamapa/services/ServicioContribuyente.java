@@ -8,10 +8,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.metamapa.repository.IContribuyentesRepository;
 
+import java.util.Optional;
+
 @Service
 public class ServicioContribuyente {
     @Autowired
     private IContribuyentesRepository repositorio;
+
+    /**
+     * Obtiene un contribuyente existente por su keycloakId, o crea uno nuevo si no existe.
+     *
+     * @param keycloakId ID externo proveniente de Keycloak (requerido)
+     * @param nombre Nombre del contribuyente (puede ser null o vacío)
+     * @param apellido Apellido del contribuyente (puede ser null o vacío)
+     * @return El contribuyente existente o el recién creado
+     * @throws DatosInvalidosException si keycloakId es null o vacío
+     */
+    public Contribuyente getOrCreateByKeycloakId(String keycloakId, String nombre, String apellido) {
+        // Validar que keycloakId no sea null ni vacío
+        if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            throw new DatosInvalidosException("El keycloakId es obligatorio y no puede estar vacío");
+        }
+
+        // Buscar contribuyente existente por keycloakId
+        Optional<Contribuyente> existente = repositorio.findByKeycloakId(keycloakId);
+
+        if (existente.isPresent()) {
+            return existente.get();
+        }
+
+        // Crear nuevo contribuyente
+        Contribuyente nuevo = new Contribuyente();
+        nuevo.setKeycloakId(keycloakId);
+        nuevo.setNombre(nombre != null ? nombre : "");
+        nuevo.setApellido(apellido != null ? apellido : "");
+        nuevo.setAnonimo(false);
+
+        return repositorio.save(nuevo);
+    }
 
     public long registrarContribuyente(ContribuyenteInputDTO contribuyenteInputDTO){
         // Validaciones
@@ -62,6 +96,22 @@ public class ServicioContribuyente {
         
         return repositorio.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + id));
+    }
+
+    /**
+     * Busca un contribuyente por su keycloakId.
+     * @param keycloakId ID externo de Keycloak
+     * @return El contribuyente encontrado
+     * @throws DatosInvalidosException si keycloakId es null o vacío
+     * @throws RecursoNoEncontradoException si no se encuentra el contribuyente
+     */
+    public Contribuyente buscarContribuyentePorKeycloakId(String keycloakId) {
+        if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            throw new DatosInvalidosException("El keycloakId es obligatorio y no puede estar vacío");
+        }
+
+        return repositorio.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con keycloakId: " + keycloakId));
     }
 
     public java.util.List<Contribuyente> listarContribuyentes(){
