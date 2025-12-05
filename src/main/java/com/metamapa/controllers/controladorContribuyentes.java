@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("/contribuyentes")
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 public class controladorContribuyentes {
     @Autowired
     private ServicioContribuyente servicioContribuyente;
