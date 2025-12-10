@@ -6,9 +6,11 @@ import com.metamapa.dtos.input.ContribucionInputDTO;
 import com.metamapa.dtos.output.ContribucionOutputDTO;
 import com.metamapa.dtos.output.ContribuyenteOutputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.metamapa.services.ServicioContribuciones;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,9 +33,19 @@ public class controladorContribuciones {
         return ResponseEntity.status(200).build();
     }
 
-    @PatchMapping("/{id}")
+    /*@PatchMapping("/{id}")
     ResponseEntity<Void> agregarArchivo(@PathVariable long id, @RequestBody ArchivoInputDTO archivo){
         servicioContribucion.adjuntarArchivo(id,archivo);
+        return ResponseEntity.status(200).build();
+    }*/
+
+    @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Void> subirArchivo(
+            @PathVariable long id,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("tipo") String tipo) {
+
+        servicioContribucion.adjuntarArchivoBinario(id, file, tipo);
         return ResponseEntity.status(200).build();
     }
 

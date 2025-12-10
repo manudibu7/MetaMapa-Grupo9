@@ -15,9 +15,15 @@ import com.metamapa.mappers.HechoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.metamapa.repository.IContribucionesRepository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +36,7 @@ public class ServicioContribuciones {
     private HechoMapper hechoMapper = new HechoMapper();
     private ArchivoMapper archivoMapper = new ArchivoMapper();
     private ContribucionMapper contribucionMapper = new ContribucionMapper();
-
+    private final Path rootLocation = Paths.get("uploads");
     /**
      * Obtiene todas las contribuciones de un contribuyente por su ID interno.
      * @param contribuyenteId ID interno del contribuyente
@@ -132,8 +138,47 @@ public class ServicioContribuciones {
         repositorio.save(contribucion);
     }
 
+    public void adjuntarArchivoBinario(long idContribucion, MultipartFile file, String tipoStr) {
+        // 1. Validaciones básicas
+        if (file.isEmpty()) {
+            throw new DatosInvalidosException("El archivo no puede estar vacío");
+        }
+
+        Contribucion contribucion = repositorio.findById(idContribucion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Contribución no encontrada con ID: " + idContribucion));
+
+        try {
+            // 2. Guardar el archivo físicamente (SIMULACIÓN LOCAL)
+            // En producción, aquí llamarías a S3 o Cloudinary
+            Files.createDirectories(rootLocation);
+            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
+
+            // Generar la URL (En local sería algo así, en la nube te la da el proveedor)
+            String urlGenerada = "/uploads/" + filename;
+
+            // 3. Crear la entidad Archivo
+            Archivo archivo = new Archivo();
+            archivo.setUrl(urlGenerada);
+            archivo.setTamanio(String.valueOf(file.getSize())); // Guardamos el tamaño en bytes
+
+            // Convertir el String "IMAGEN", "VIDEO" al Enum
+            try {
+                archivo.setTipo(TipoMedia.valueOf(tipoStr.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                archivo.setTipo(TipoMedia.TEXTO); // O lanzar excepción
+            }
+
+            // 4. Vincular con el Hecho
+            contribucion.getHecho().agregarAdjunto(archivo);
+            repositorio.save(contribucion);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar el archivo: " + e.getMessage());
+        }
+    }
+
     public void adjuntarArchivo(long idContribucion, ArchivoInputDTO dto){
-        // Validaciones
         if (dto == null) {
             throw new DatosInvalidosException("Los datos del archivo no pueden ser nulos");
         }
