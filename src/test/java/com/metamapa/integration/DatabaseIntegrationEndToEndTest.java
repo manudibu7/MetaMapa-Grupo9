@@ -105,7 +105,6 @@ class DatabaseIntegrationEndToEndTest {
         contribuyente.setNombre("María");
         contribuyente.setApellido("González");
         contribuyente.setEdad(28);
-        contribuyente.setAnonimo(false);
         contribuyente = contribuyentesRepository.save(contribuyente);
         Long id = contribuyente.getId();
 
@@ -141,19 +140,16 @@ class DatabaseIntegrationEndToEndTest {
         c1.setNombre("Juan");
         c1.setApellido("Pérez");
         c1.setEdad(30);
-        c1.setAnonimo(false);
 
         Contribuyente c2 = new Contribuyente();
         c2.setNombre("Ana");
         c2.setApellido("Martínez");
         c2.setEdad(25);
-        c2.setAnonimo(false);
 
         Contribuyente c3 = new Contribuyente();
         c3.setNombre("Pedro");
         c3.setApellido("Sánchez");
         c3.setEdad(40);
-        c3.setAnonimo(false);
 
         contribuyentesRepository.saveAll(java.util.List.of(c1, c2, c3));
 
@@ -177,7 +173,6 @@ class DatabaseIntegrationEndToEndTest {
         contribuyente.setNombre("Temporal");
         contribuyente.setApellido("Test");
         contribuyente.setEdad(99);
-        contribuyente.setAnonimo(false);
         contribuyente = contribuyentesRepository.save(contribuyente);
         Long id = contribuyente.getId();
 
@@ -226,7 +221,6 @@ class DatabaseIntegrationEndToEndTest {
         contribuyente.setNombre("Historiador");
         contribuyente.setApellido("Experto");
         contribuyente.setEdad(45);
-        contribuyente.setAnonimo(false);
         contribuyente = contribuyentesRepository.save(contribuyente);
 
         // creo contribucion completa
@@ -274,7 +268,6 @@ class DatabaseIntegrationEndToEndTest {
         contribuyente.setNombre("Test");
         contribuyente.setApellido("Integridad");
         contribuyente.setEdad(30);
-        contribuyente.setAnonimo(false);
         contribuyente = contribuyentesRepository.save(contribuyente);
 
         // creo contribucion asociada

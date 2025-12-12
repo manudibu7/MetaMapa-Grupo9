@@ -41,7 +41,6 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("Juan");
         contribuyente.setApellido("Pérez");
         contribuyente.setEdad(30);
-        contribuyente.setAnonimo(false);
 
         // guardo en bd
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
@@ -52,7 +51,6 @@ class IContribuyentesRepositoryIntegrationTest {
         assertThat(guardado.getNombre()).isEqualTo("Juan");
         assertThat(guardado.getApellido()).isEqualTo("Pérez");
         assertThat(guardado.getEdad()).isEqualTo(30);
-        assertThat(guardado.getAnonimo()).isFalse();
     }
 
     /**
@@ -65,7 +63,6 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("María");
         contribuyente.setApellido("González");
         contribuyente.setEdad(25);
-        contribuyente.setAnonimo(false);
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
 
         // busco por id
@@ -100,19 +97,16 @@ class IContribuyentesRepositoryIntegrationTest {
         c1.setNombre("Carlos");
         c1.setApellido("López");
         c1.setEdad(35);
-        c1.setAnonimo(false);
 
         Contribuyente c2 = new Contribuyente();
         c2.setNombre("Ana");
         c2.setApellido("Martínez");
         c2.setEdad(28);
-        c2.setAnonimo(false);
 
         Contribuyente c3 = new Contribuyente();
         c3.setNombre("Pedro");
         c3.setApellido("Sánchez");
         c3.setEdad(40);
-        c3.setAnonimo(true);
 
         contribuyentesRepository.saveAll(List.of(c1, c2, c3));
 
@@ -135,20 +129,17 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("Luis");
         contribuyente.setApellido("Rodríguez");
         contribuyente.setEdad(45);
-        contribuyente.setAnonimo(false);
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
 
         // modifico y actualizo
         guardado.setNombre("Luis Alberto");
         guardado.setEdad(46);
-        guardado.setAnonimo(true);
         Contribuyente actualizado = contribuyentesRepository.save(guardado);
 
         // verifico los cambios
         assertThat(actualizado.getId()).isEqualTo(guardado.getId());
         assertThat(actualizado.getNombre()).isEqualTo("Luis Alberto");
         assertThat(actualizado.getEdad()).isEqualTo(46);
-        assertThat(actualizado.getAnonimo()).isTrue();
 
         // verifico en la bd
         Optional<Contribuyente> verificado = contribuyentesRepository.findById(guardado.getId());
@@ -166,7 +157,6 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("Elena");
         contribuyente.setApellido("Fernández");
         contribuyente.setEdad(32);
-        contribuyente.setAnonimo(false);
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
         Long id = guardado.getId();
 
@@ -188,7 +178,6 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("Roberto");
         contribuyente.setApellido("Gómez");
         contribuyente.setEdad(50);
-        contribuyente.setAnonimo(false);
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
 
         // verifico existencia
@@ -208,13 +197,11 @@ class IContribuyentesRepositoryIntegrationTest {
         c1.setNombre("Test1");
         c1.setApellido("Apellido1");
         c1.setEdad(20);
-        c1.setAnonimo(false);
 
         Contribuyente c2 = new Contribuyente();
         c2.setNombre("Test2");
         c2.setApellido("Apellido2");
         c2.setEdad(25);
-        c2.setAnonimo(false);
 
         contribuyentesRepository.saveAll(List.of(c1, c2));
 
@@ -232,7 +219,6 @@ class IContribuyentesRepositoryIntegrationTest {
         contribuyente.setNombre("Transaccional");
         contribuyente.setApellido("Test");
         contribuyente.setEdad(33);
-        contribuyente.setAnonimo(false);
 
         Contribuyente guardado = contribuyentesRepository.save(contribuyente);
         contribuyentesRepository.flush(); // fuerzo escritura a bd
@@ -242,26 +228,4 @@ class IContribuyentesRepositoryIntegrationTest {
         assertThat(recuperado).isPresent();
         assertThat(recuperado.get().getNombre()).isEqualTo("Transaccional");
     }
-
-    /**
-     * test: guardo un contribuyente anonimo
-     */
-    @Test
-    void testGuardarContribuyenteAnonimo_DeberiaGuardarCorrectamente() {
-        // preparo un contribuyente anonimo
-        Contribuyente anonimo = new Contribuyente();
-        anonimo.setNombre("Anónimo");
-        anonimo.setApellido("Anónimo");
-        anonimo.setEdad(0);  // edad 0 para anonimos que no quieren revelar su edad
-        anonimo.setAnonimo(true);
-
-        // guardo
-        Contribuyente guardado = contribuyentesRepository.save(anonimo);
-
-        // verifico que se guardo correctamente
-        assertThat(guardado.getId()).isNotNull();
-        assertThat(guardado.getAnonimo()).isTrue();
-        assertThat(guardado.getEdad()).isEqualTo(0);
-    }
 }
-

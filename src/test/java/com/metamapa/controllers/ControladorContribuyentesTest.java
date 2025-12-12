@@ -37,8 +37,7 @@ class ControladorContribuyentesTest {
         ContribuyenteInputDTO inputDTO = new ContribuyenteInputDTO(
             "Juan",
             "Pérez",
-            30,
-            false
+            30
         );
         Long idEsperado = 1L;
         
@@ -52,7 +51,6 @@ class ControladorContribuyentesTest {
         contribuyente.setNombre("Juan");
         contribuyente.setApellido("Pérez");
         contribuyente.setEdad(30);
-        contribuyente.setAnonimo(false);
 
         when(servicioContribuyente.buscarContribuyente(idEsperado))
             .thenReturn(contribuyente);
@@ -65,43 +63,7 @@ class ControladorContribuyentesTest {
                 .andExpect(jsonPath("$.id").value(idEsperado))
                 .andExpect(jsonPath("$.nombre").value("Juan"))
                 .andExpect(jsonPath("$.apellido").value("Pérez"))
-                .andExpect(jsonPath("$.edad").value(30))
-                .andExpect(jsonPath("$.anonimo").value(false));
-    }
-
-    @Test
-    void testAgregarContribuyenteAnonimo_DeberiaRetornar201() throws Exception {
-        // preparo un contribuyente anonimo
-        ContribuyenteInputDTO inputDTO = new ContribuyenteInputDTO(
-            null,
-            null,
-            null,
-            true
-        );
-        Long idEsperado = 2L;
-        
-        // mockeo el servicio para que retorne el id
-        when(servicioContribuyente.registrarContribuyente(any(ContribuyenteInputDTO.class)))
-            .thenReturn(idEsperado);
-
-        // mockeo buscarContribuyente para que retorne el contribuyente anonimo completo
-        var contribuyente = new com.metamapa.domain.Contribuyente();
-        contribuyente.setId(idEsperado);
-        contribuyente.setNombre(null);
-        contribuyente.setApellido(null);
-        contribuyente.setEdad(null);
-        contribuyente.setAnonimo(true);
-
-        when(servicioContribuyente.buscarContribuyente(idEsperado))
-            .thenReturn(contribuyente);
-
-        // ejecuto y verifico
-        mockMvc.perform(post("/contribuyentes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(idEsperado))
-                .andExpect(jsonPath("$.anonimo").value(true));
+                .andExpect(jsonPath("$.edad").value(30));
     }
 
     @Test
@@ -113,8 +75,7 @@ class ControladorContribuyentesTest {
         contribuyente.setNombre("Juan");
         contribuyente.setApellido("Pérez");
         contribuyente.setEdad(30);
-        contribuyente.setAnonimo(false);
-        
+
         when(servicioContribuyente.buscarContribuyente(id))
             .thenReturn(contribuyente);
 
@@ -124,8 +85,7 @@ class ControladorContribuyentesTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.nombre").value("Juan"))
                 .andExpect(jsonPath("$.apellido").value("Pérez"))
-                .andExpect(jsonPath("$.edad").value(30))
-                .andExpect(jsonPath("$.anonimo").value(false));
+                .andExpect(jsonPath("$.edad").value(30));
     }
 
     @Test
@@ -140,27 +100,4 @@ class ControladorContribuyentesTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    void testObtenerContribuyenteAnonimo_DeberiaRetornar200ConDatosAnonimos() throws Exception {
-        // preparo un contribuyente anonimo
-        Long id = 3L;
-        var contribuyente = new com.metamapa.domain.Contribuyente();
-        contribuyente.setId(id);
-        contribuyente.setNombre(null);  // anonimo no tiene nombre
-        contribuyente.setApellido(null);  // anonimo no tiene apellido
-        contribuyente.setEdad(null);  // anonimo no tiene edad
-        contribuyente.setAnonimo(true);
-        
-        when(servicioContribuyente.buscarContribuyente(id))
-            .thenReturn(contribuyente);
-
-        // ejecuto y verifico
-        mockMvc.perform(get("/contribuyentes/{id}", id))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.anonimo").value(true))
-                .andExpect(jsonPath("$.nombre").doesNotExist())
-                .andExpect(jsonPath("$.apellido").doesNotExist())
-                .andExpect(jsonPath("$.edad").doesNotExist());
-    }
 }

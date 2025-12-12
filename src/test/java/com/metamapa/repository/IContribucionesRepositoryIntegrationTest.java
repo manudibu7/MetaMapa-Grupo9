@@ -42,7 +42,6 @@ class IContribucionesRepositoryIntegrationTest {
         contribuyentePrueba.setNombre("Juan");
         contribuyentePrueba.setApellido("Pérez");
         contribuyentePrueba.setEdad(30);
-        contribuyentePrueba.setAnonimo(false);
         contribuyentePrueba = contribuyentesRepository.save(contribuyentePrueba);
     }
 

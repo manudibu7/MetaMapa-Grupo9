@@ -22,7 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -70,7 +72,7 @@ class ControladorContribucionesTest {
             ubicacion,
             "Deportes"
         );
-        ContribucionInputDTO inputDTO = new ContribucionInputDTO(1L, hecho);
+        ContribucionInputDTO inputDTO = new ContribucionInputDTO(1L, hecho, false);
         Long idEsperado = 10L;
 
         when(servicioContribuciones.crear(any(ContribucionInputDTO.class)))
@@ -95,7 +97,7 @@ class ControladorContribucionesTest {
             null,
             "Cultura"
         );
-        ContribucionInputDTO inputDTO = new ContribucionInputDTO(2L, hecho);
+        ContribucionInputDTO inputDTO = new ContribucionInputDTO(2L, hecho, false);
         Long idEsperado = 11L;
 
         when(servicioContribuciones.crear(any(ContribucionInputDTO.class)))
@@ -119,7 +121,7 @@ class ControladorContribucionesTest {
             ubicacion,
             "Deportes"
         );
-        ContribucionInputDTO inputDTO = new ContribucionInputDTO(1L, hechoEditado);
+        ContribucionInputDTO inputDTO = new ContribucionInputDTO(1L, hechoEditado, false);
 
         doNothing().when(servicioContribuciones).editar(eq(id), any(HechoInputDTO.class));
 
@@ -134,21 +136,24 @@ class ControladorContribucionesTest {
     @Test
     void testAgregarArchivo_DeberiaRetornar200() throws Exception {
         Long id = 10L;
-        ArchivoInputDTO archivo = new ArchivoInputDTO(
-            1L,
+
+        // Crear un archivo multipart simulado
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "imagen.jpg",
             "image/jpeg",
-            "http://example.com/imagen.jpg"
+            "contenido de imagen".getBytes()
         );
 
-        doNothing().when(servicioContribuciones).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
+        doNothing().when(servicioContribuciones).adjuntarArchivoBinario(eq(id), any(MultipartFile.class), eq("image/jpeg"));
 
-
-        mockMvc.perform(patch("/contribuciones/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivo)))
+        mockMvc.perform(multipart("/contribuciones/{id}", id)
+                .file(file)
+                .param("tipo", "image/jpeg")
+                .with(request -> { request.setMethod("PATCH"); return request; }))
                 .andExpect(status().isOk());
 
-        verify(servicioContribuciones, times(1)).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
+        verify(servicioContribuciones, times(1)).adjuntarArchivoBinario(eq(id), any(MultipartFile.class), eq("image/jpeg"));
     }
 
     @Test
@@ -164,7 +169,7 @@ class ControladorContribucionesTest {
         UbicacionOutputDTO ubicacion = new UbicacionOutputDTO(-34.6037f, -58.3816f);
         hecho.setUbicacion(ubicacion);
         
-        ContribucionOutputDTO outputDTO = new ContribucionOutputDTO(1L, hecho, id);
+        ContribucionOutputDTO outputDTO = new ContribucionOutputDTO(1L, hecho, id, false);
 
         when(servicioContribuciones.obtener(id))
             .thenReturn(outputDTO);
@@ -182,23 +187,25 @@ class ControladorContribucionesTest {
 
     @Test
     void testAgregarArchivoMultimedia_DeberiaRetornar200() throws Exception {
-
         Long id = 15L;
-        ArchivoInputDTO archivoVideo = new ArchivoInputDTO(
-            2L,
+
+        // Crear un archivo multipart simulado de video
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "video.mp4",
             "video/mp4",
-            "http://example.com/video.mp4"
+            "contenido de video".getBytes()
         );
 
-        doNothing().when(servicioContribuciones).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
+        doNothing().when(servicioContribuciones).adjuntarArchivoBinario(eq(id), any(MultipartFile.class), eq("video/mp4"));
 
-
-        mockMvc.perform(patch("/contribuciones/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(archivoVideo)))
+        mockMvc.perform(multipart("/contribuciones/{id}", id)
+                .file(file)
+                .param("tipo", "video/mp4")
+                .with(request -> { request.setMethod("PATCH"); return request; }))
                 .andExpect(status().isOk());
 
-        verify(servicioContribuciones, times(1)).adjuntarArchivo(eq(id), any(ArchivoInputDTO.class));
+        verify(servicioContribuciones, times(1)).adjuntarArchivoBinario(eq(id), any(MultipartFile.class), eq("video/mp4"));
     }
 
     // =====================================================================
@@ -222,8 +229,8 @@ class ControladorContribucionesTest {
         hecho2.setFecha(LocalDate.of(2023, 2, 20));
         hecho2.setCategoria("Cultura");
 
-        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 10L);
-        ContribucionOutputDTO contribucion2 = new ContribucionOutputDTO(contribuyenteId, hecho2, 11L);
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 10L, false);
+        ContribucionOutputDTO contribucion2 = new ContribucionOutputDTO(contribuyenteId, hecho2, 11L, false);
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1, contribucion2);
 
@@ -282,7 +289,7 @@ class ControladorContribucionesTest {
         hecho1.setFecha(LocalDate.of(2023, 3, 10));
         hecho1.setCategoria("Tecnología");
 
-        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 20L);
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 20L, false);
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1);
 
@@ -348,9 +355,9 @@ class ControladorContribucionesTest {
         hecho3.setCategoria("Cat3");
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(
-            new ContribucionOutputDTO(contribuyenteId, hecho1, 100L),
-            new ContribucionOutputDTO(contribuyenteId, hecho2, 101L),
-            new ContribucionOutputDTO(contribuyenteId, hecho3, 102L)
+            new ContribucionOutputDTO(contribuyenteId, hecho1, 100L, false),
+            new ContribucionOutputDTO(contribuyenteId, hecho2, 101L, false),
+            new ContribucionOutputDTO(contribuyenteId, hecho3, 102L, false)
         );
 
         when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteId))

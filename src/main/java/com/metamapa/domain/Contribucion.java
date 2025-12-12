@@ -39,7 +39,7 @@ public class Contribucion {
     private LocalDate fechaDeCarga;
 
     @Column(nullable = false)
-    private Boolean anonimo;
+    private Boolean anonimo = false;  // Valor por defecto
 
 
     //metodos que figuran en el diagrama

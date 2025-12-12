@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -74,9 +76,9 @@ class ControladorRevisionesTest {
         hecho2.setFecha(LocalDate.of(2024, 1, 20));
         hecho2.setCategoria("Cultura");
         
-        ContribucionOutputDTO contrib1 = new ContribucionOutputDTO(1L, hecho1, 101L);
-        ContribucionOutputDTO contrib2 = new ContribucionOutputDTO(2L, hecho2, 102L);
-        
+        ContribucionOutputDTO contrib1 = new ContribucionOutputDTO(1L, hecho1, 101L, false);
+        ContribucionOutputDTO contrib2 = new ContribucionOutputDTO(2L, hecho2, 102L, false);
+
         List<ContribucionOutputDTO> pendientes = Arrays.asList(contrib1, contrib2);
         
         when(servicioRevisiones.listarPendientes())
@@ -123,7 +125,7 @@ class ControladorRevisionesTest {
         // Arrange
         Long idContribucion = 101L;
         
-        doNothing().when(servicioRevisiones).aceptar(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).aceptar(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/aceptar", idContribucion)
@@ -131,7 +133,7 @@ class ControladorRevisionesTest {
                 .content("{}"))
                 .andExpect(status().isNoContent());
 
-        verify(servicioRevisiones, times(1)).aceptar(eq(idContribucion), eq(null));
+        verify(servicioRevisiones, times(1)).aceptar(eq(idContribucion), eq(null), isNull());
     }
 
     @Test
@@ -141,7 +143,7 @@ class ControladorRevisionesTest {
         ComentariosDTO comentarios = new ComentariosDTO();
         comentarios.setComentarios("Excelente contribución, muy bien documentada");
         
-        doNothing().when(servicioRevisiones).aceptar(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).aceptar(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/aceptar", idContribucion)
@@ -150,7 +152,7 @@ class ControladorRevisionesTest {
                 .andExpect(status().isNoContent());
 
         verify(servicioRevisiones, times(1))
-            .aceptar(eq(idContribucion), eq("Excelente contribución, muy bien documentada"));
+            .aceptar(eq(idContribucion), eq("Excelente contribución, muy bien documentada"), isNull());
     }
 
     @Test
@@ -160,7 +162,7 @@ class ControladorRevisionesTest {
         ComentariosDTO comentarios = new ComentariosDTO();
         comentarios.setComentarios("Aceptado con modificaciones menores en la descripción");
         
-        doNothing().when(servicioRevisiones).aceptarConSugerencias(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).aceptarConSugerencias(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/aceptar-con-cambios", idContribucion)
@@ -169,7 +171,7 @@ class ControladorRevisionesTest {
                 .andExpect(status().isNoContent());
 
         verify(servicioRevisiones, times(1))
-            .aceptarConSugerencias(eq(idContribucion), eq("Aceptado con modificaciones menores en la descripción"));
+            .aceptarConSugerencias(eq(idContribucion), eq("Aceptado con modificaciones menores en la descripción"), isNull());
     }
 
     @Test
@@ -177,7 +179,7 @@ class ControladorRevisionesTest {
         // Arrange
         Long idContribucion = 104L;
         
-        doNothing().when(servicioRevisiones).aceptarConSugerencias(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).aceptarConSugerencias(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/aceptar-con-cambios", idContribucion)
@@ -185,7 +187,7 @@ class ControladorRevisionesTest {
                 .content("{}"))
                 .andExpect(status().isNoContent());
 
-        verify(servicioRevisiones, times(1)).aceptarConSugerencias(eq(idContribucion), eq(null));
+        verify(servicioRevisiones, times(1)).aceptarConSugerencias(eq(idContribucion), eq(null), isNull());
     }
 
     @Test
@@ -195,7 +197,7 @@ class ControladorRevisionesTest {
         ComentariosDTO comentarios = new ComentariosDTO();
         comentarios.setComentarios("La información no está suficientemente verificada");
         
-        doNothing().when(servicioRevisiones).rechazar(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).rechazar(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/rechazar", idContribucion)
@@ -204,7 +206,7 @@ class ControladorRevisionesTest {
                 .andExpect(status().isNoContent());
 
         verify(servicioRevisiones, times(1))
-            .rechazar(eq(idContribucion), eq("La información no está suficientemente verificada"));
+            .rechazar(eq(idContribucion), eq("La información no está suficientemente verificada"), isNull());
     }
 
     @Test
@@ -212,7 +214,7 @@ class ControladorRevisionesTest {
         // Arrange
         Long idContribucion = 106L;
         
-        doNothing().when(servicioRevisiones).rechazar(eq(idContribucion), anyString());
+        doNothing().when(servicioRevisiones).rechazar(eq(idContribucion), anyString(), isNull());
 
         // Act & Assert
         mockMvc.perform(post("/revisiones/{idContribucion}/rechazar", idContribucion)
@@ -220,7 +222,7 @@ class ControladorRevisionesTest {
                 .content("{}"))
                 .andExpect(status().isNoContent());
 
-        verify(servicioRevisiones, times(1)).rechazar(eq(idContribucion), eq(null));
+        verify(servicioRevisiones, times(1)).rechazar(eq(idContribucion), eq(null), isNull());
     }
 
     @Test
@@ -232,7 +234,7 @@ class ControladorRevisionesTest {
         hecho.setFecha(LocalDate.of(2024, 10, 28));
         hecho.setCategoria("Historia");
         
-        ContribucionOutputDTO contrib = new ContribucionOutputDTO(1L, hecho, 200L);
+        ContribucionOutputDTO contrib = new ContribucionOutputDTO(1L, hecho, 200L, false);
         when(servicioRevisiones.listarPendientes())
             .thenReturn(List.of(contrib));
 
@@ -259,7 +261,7 @@ class ControladorRevisionesTest {
         ComentariosDTO comentarios = new ComentariosDTO();
         comentarios.setComentarios("Contribución valiosa y bien documentada");
         
-        doNothing().when(servicioRevisiones).aceptar(eq(200L), anyString());
+        doNothing().when(servicioRevisiones).aceptar(eq(200L), anyString(), isNull());
 
         // Act & Assert - Aceptar
         mockMvc.perform(post("/revisiones/{idContribucion}/aceptar", 200L)
@@ -267,6 +269,6 @@ class ControladorRevisionesTest {
                 .content(objectMapper.writeValueAsString(comentarios)))
                 .andExpect(status().isNoContent());
 
-        verify(servicioRevisiones, times(1)).aceptar(eq(200L), anyString());
+        verify(servicioRevisiones, times(1)).aceptar(eq(200L), anyString(), isNull());
     }
 }
