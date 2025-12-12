@@ -11,4 +11,5 @@ public class ContribucionOutputDTO {
     long idContribuyente;
     HechoOutputDTO hecho;
     long idContribucion;
+    boolean anonimo;
 }

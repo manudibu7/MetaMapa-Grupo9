@@ -109,7 +109,7 @@ public class ServicioContribuciones {
 
         Contribuyente contribuyente = servicioContribuyente.buscarContribuyente(contribucionInputDTO.getIdContribuyente());
         contribucion.setContribuyente(contribuyente);
-
+        contribucion.setAnonimo(contribucionInputDTO.getAnonimo());
         repositorio.save(contribucion);
         return contribucion.getId();
     }

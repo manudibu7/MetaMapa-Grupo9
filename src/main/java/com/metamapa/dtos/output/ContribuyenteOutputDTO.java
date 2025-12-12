@@ -11,6 +11,5 @@ public class ContribuyenteOutputDTO {
     String nombre;
     String apellido;
     Integer edad;  // Cambiado de int a Integer para permitir null
-    Boolean anonimo;  // Cambiado de boolean a Boolean para permitir null
     Long id;  // Cambiado de long a Long para consistencia
 }

@@ -11,5 +11,4 @@ public class ContribuyenteInputDTO {
     String nombre;
     String apellido;
     Integer edad;
-    boolean anonimo;
 }

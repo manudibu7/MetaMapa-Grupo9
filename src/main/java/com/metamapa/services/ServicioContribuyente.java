@@ -42,7 +42,6 @@ public class ServicioContribuyente {
         nuevo.setKeycloakId(keycloakId);
         nuevo.setNombre(nombre != null ? nombre : "");
         nuevo.setApellido(apellido != null ? apellido : "");
-        nuevo.setAnonimo(false);
 
         return repositorio.save(nuevo);
     }
@@ -75,15 +74,15 @@ public class ServicioContribuyente {
                                                 contribuyenteInputDTO.getApellido(),
                                                 contribuyenteInputDTO.getEdad());
         // establecer anonimo: true si el DTO pide anonimo o si no hay nombre ni apellido (nulos o vacios)
-        boolean forzarAnonimoPorCamposVacíos = !tieneNombre && !tieneApellido;
-        boolean anonimoSolicitado = false;
-        try {
-            // lombok genera isAnonimo() para boolean primitives
-            anonimoSolicitado = contribuyenteInputDTO.isAnonimo();
-        } catch (Exception e) {
-            // por seguridad, si no existe el metodo isAnonimo(), ignorar y usar default false
-        }
-        nuevo.setAnonimo(anonimoSolicitado || forzarAnonimoPorCamposVacíos);
+        //boolean forzarAnonimoPorCamposVacíos = !tieneNombre && !tieneApellido;
+        //boolean anonimoSolicitado = false;
+        //try {
+        //    // lombok genera isAnonimo() para boolean primitives
+        //    anonimoSolicitado = contribuyenteInputDTO.isAnonimo();
+        //} catch (Exception e) {
+        //    // por seguridad, si no existe el metodo isAnonimo(), ignorar y usar default false
+        //}
+        //nuevo.setAnonimo(anonimoSolicitado || forzarAnonimoPorCamposVacíos);
 
         repositorio.save(nuevo);
         return nuevo.getId();

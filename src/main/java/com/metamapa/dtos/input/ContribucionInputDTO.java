@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class ContribucionInputDTO {
     Long idContribuyente;
     HechoInputDTO hecho;
+    Boolean anonimo;
 }

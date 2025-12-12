@@ -61,7 +61,6 @@ public class controladorContribuyentes {
         output.setNombre(c.getNombre());
         output.setApellido(c.getApellido());
         output.setEdad(c.getEdad());
-        output.setAnonimo(c.getAnonimo());
 
         return ResponseEntity.status(201).body(output);
     }
@@ -76,7 +75,6 @@ public class controladorContribuyentes {
                     dto.setNombre(c.getNombre());
                     dto.setApellido(c.getApellido());
                     dto.setEdad(c.getEdad());
-                    dto.setAnonimo(c.getAnonimo());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -92,7 +90,6 @@ public class controladorContribuyentes {
         contribuyenteOutputDTO.setNombre(c.getNombre());
         contribuyenteOutputDTO.setApellido(c.getApellido());
         contribuyenteOutputDTO.setEdad(c.getEdad());
-        contribuyenteOutputDTO.setAnonimo(c.getAnonimo());
         return ResponseEntity.status(200).body(contribuyenteOutputDTO);
     }
 
@@ -111,7 +108,6 @@ public class controladorContribuyentes {
         output.setNombre(c.getNombre());
         output.setApellido(c.getApellido());
         output.setEdad(c.getEdad());
-        output.setAnonimo(c.getAnonimo());
 
         return ResponseEntity.status(200).body(output);
     }

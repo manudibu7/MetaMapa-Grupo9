@@ -40,14 +40,16 @@ public class ControladorRevisiones {
     @PostMapping("/{idContribucion}/aceptar")
     public ResponseEntity<Void> aceptar(@PathVariable Long idContribucion, @RequestBody(required = false) ComentariosDTO body) {
         String comentarios = body != null ? body.getComentarios() : null;
-        servicioRevision.aceptar(idContribucion, comentarios);
+        Long idContribuyente = body != null ? body.getContribuyenteId() : null;
+        servicioRevision.aceptar(idContribucion, comentarios, idContribuyente);
         return ResponseEntity.noContent().build();
     }
 
     // POST /revisiones/{id}/aceptar-con-cambios
     @PostMapping("/{idContribucion}/aceptar-con-cambios")
     public ResponseEntity<Void> aceptarConCambios(@PathVariable Long idContribucion, @RequestBody ComentariosDTO body) {
-        servicioRevision.aceptarConSugerencias(idContribucion, body != null ? body.getComentarios() : null
+        servicioRevision.aceptarConSugerencias(idContribucion, body != null ? body.getComentarios() : null,
+                body != null ? body.getContribuyenteId() : null
         );
         return ResponseEntity.noContent().build();
     }
@@ -55,7 +57,8 @@ public class ControladorRevisiones {
     // POST /revisiones/{id}/rechazar
     @PostMapping("/{idContribucion}/rechazar")
     public ResponseEntity<Void> rechazar(@PathVariable Long idContribucion, @RequestBody ComentariosDTO body) {
-        servicioRevision.rechazar(idContribucion, body != null ? body.getComentarios() : null
+        servicioRevision.rechazar(idContribucion, body != null ? body.getComentarios() : null,
+                body != null ? body.getContribuyenteId() : null
         );
         return ResponseEntity.noContent().build();
     }
@@ -64,5 +67,8 @@ public class ControladorRevisiones {
     @Data
     public static class ComentariosDTO {
         private String comentarios;
+        // Nuevo campo para recibir el id del contribuyente responsable
+        @com.fasterxml.jackson.annotation.JsonProperty("contribuyenteId")
+        private Long contribuyenteId;
     }
 }

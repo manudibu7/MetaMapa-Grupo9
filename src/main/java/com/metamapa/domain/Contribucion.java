@@ -38,6 +38,8 @@ public class Contribucion {
     @Column(name="fecha_de_carga", nullable=false)
     private LocalDate fechaDeCarga;
 
+    @Column(nullable = false)
+    private Boolean anonimo;
 
 
     //metodos que figuran en el diagrama

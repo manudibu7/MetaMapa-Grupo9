@@ -31,9 +31,6 @@ public class Contribuyente {
 
     private Integer edad;  // Nullable para contribuyentes anónimos
 
-    @Column(nullable = false)
-    private Boolean anonimo;
-
     public Contribuyente(String nombre, String apellido, Integer edad) {  // Cambio de int a Integer
         if (edad != null && edad < 0) {
             throw new IllegalArgumentException("La edad no puede ser negativa.");
@@ -41,6 +38,5 @@ public class Contribuyente {
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;
-        this.anonimo = false;
     }
 }

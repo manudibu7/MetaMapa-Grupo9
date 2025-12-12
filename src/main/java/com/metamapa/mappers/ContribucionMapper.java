@@ -13,6 +13,7 @@ public class ContribucionMapper {
         ContribucionOutputDTO dto = new ContribucionOutputDTO();
         HechoOutputDTO hechoDto = hechoMapper.hechoToHechoOutputDTO(c.getHecho());
         dto.setHecho(hechoDto);
+        dto.setAnonimo(c.getAnonimo());
         dto.setIdContribucion(c.getId());
         dto.setIdContribuyente(c.getContribuyente().getId());
 

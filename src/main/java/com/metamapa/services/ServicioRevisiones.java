@@ -33,10 +33,12 @@ public class ServicioRevisiones {
     private final RevisionMapper revisionMapper;
     @Autowired
     private final ContribucionMapper contribucionMapper;
+    @Autowired
+    private final com.metamapa.repository.IContribuyentesRepository contribuyentesRepository;
 
 
     @Transactional
-    public void aceptar(Long idContribucion, String comentarios) {
+    public void aceptar(Long idContribucion, String comentarios, Long idContribuyente) {
         // Validaciones
         if (idContribucion == null || idContribucion <= 0) {
             throw new DatosInvalidosException("El ID de contribución debe ser un número positivo");
@@ -50,6 +52,13 @@ public class ServicioRevisiones {
         // Validar que esté en estado pendiente
         if (revision.getEstado() != EstadoRevision.PENDIENTE) {
             throw new DatosInvalidosException("Solo se pueden aceptar revisiones en estado PENDIENTE. Estado actual: " + revision.getEstado());
+        }
+
+        // Asignar responsable si se proporcionó id
+        if (idContribuyente != null) {
+            com.metamapa.domain.Contribuyente responsable = contribuyentesRepository.findById(idContribuyente)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + idContribuyente));
+            revision.setResponsable(responsable);
         }
 
         revision.setEstado(EstadoRevision.ACEPTADA);
@@ -70,7 +79,7 @@ public class ServicioRevisiones {
 
 
     @Transactional
-    public void aceptarConSugerencias(Long idContribucion, String comentarios) {
+    public void aceptarConSugerencias(Long idContribucion, String comentarios, Long idContribuyente) {
         // Validaciones
         if (idContribucion == null || idContribucion <= 0) {
             throw new DatosInvalidosException("El ID de contribución debe ser un número positivo");
@@ -89,6 +98,13 @@ public class ServicioRevisiones {
             throw new DatosInvalidosException("Solo se pueden revisar contribuciones en estado PENDIENTE. Estado actual: " + revision.getEstado());
         }
 
+        // Asignar responsable si se proporcionó id
+        if (idContribuyente != null) {
+            com.metamapa.domain.Contribuyente responsable = contribuyentesRepository.findById(idContribuyente)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + idContribuyente));
+            revision.setResponsable(responsable);
+        }
+
         revision.setEstado(EstadoRevision.ACEPTADA_CON_SUGERENCIA);
         revision.setMensaje(comentarios);
         revision.setFecha(LocalDate.now());
@@ -96,7 +112,7 @@ public class ServicioRevisiones {
     }
 
     @Transactional
-    public void rechazar(Long idContribucion, String comentarios) {
+    public void rechazar(Long idContribucion, String comentarios, Long idContribuyente) {
         // Validaciones
         if (idContribucion == null || idContribucion <= 0) {
             throw new DatosInvalidosException("El ID de contribución debe ser un número positivo");
@@ -113,6 +129,13 @@ public class ServicioRevisiones {
         // Validar que esté en estado pendiente
         if (revision.getEstado() != EstadoRevision.PENDIENTE) {
             throw new DatosInvalidosException("Solo se pueden rechazar contribuciones en estado PENDIENTE. Estado actual: " + revision.getEstado());
+        }
+
+        // Asignar responsable si se proporcionó id
+        if (idContribuyente != null) {
+            com.metamapa.domain.Contribuyente responsable = contribuyentesRepository.findById(idContribuyente)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + idContribuyente));
+            revision.setResponsable(responsable);
         }
 
         revision.setEstado(EstadoRevision.RECHAZADA);
