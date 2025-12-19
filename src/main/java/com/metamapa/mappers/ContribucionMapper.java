@@ -15,6 +15,7 @@ public class ContribucionMapper {
         dto.setHecho(hechoDto);
         dto.setAnonimo(c.getAnonimo());
         dto.setIdContribucion(c.getId());
+        dto.setNombreContribuyente(c.getContribuyente().getNombre() + " " + c.getContribuyente().getApellido());
         dto.setIdContribuyente(c.getContribuyente().getId());
 
         return dto;

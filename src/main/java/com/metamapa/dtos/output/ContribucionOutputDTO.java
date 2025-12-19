@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ContribucionOutputDTO {
     long idContribuyente;
+    String nombreContribuyente;
     HechoOutputDTO hecho;
     long idContribucion;
     boolean anonimo;
