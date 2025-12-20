@@ -140,4 +140,40 @@ public class ServicioContribuyente {
         
         repositorio.deleteById(id);
     }
+    public Contribuyente actualizarConKeycloak(
+            String keycloakId,
+            String nombre,
+            String apellido,
+            Integer edad
+    ) {
+        if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            throw new DatosInvalidosException("keycloakId inválido");
+        }
+
+        if (edad != null && (edad < 0 || edad > 150)) {
+            throw new DatosInvalidosException("La edad debe estar entre 0 y 150 años");
+        }
+
+        boolean tieneNombre = nombre != null && !nombre.trim().isEmpty();
+        boolean tieneApellido = apellido != null && !apellido.trim().isEmpty();
+
+        if (tieneNombre ^ tieneApellido) {
+            throw new DatosInvalidosException(
+                    "Nombre y apellido deben proporcionarse juntos"
+            );
+        }
+
+        Contribuyente contribuyente = repositorio.findByKeycloakId(keycloakId)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException(
+                                "Contribuyente no encontrado para el usuario autenticado"
+                        )
+                );
+
+        contribuyente.setNombre(nombre);
+        contribuyente.setApellido(apellido);
+        contribuyente.setEdad(edad);
+
+        return repositorio.save(contribuyente);
+    }
 }

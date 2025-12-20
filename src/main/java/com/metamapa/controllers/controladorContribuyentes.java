@@ -1,11 +1,13 @@
 package com.metamapa.controllers;
 
+import com.metamapa.domain.Contribuyente;
 import com.metamapa.dtos.input.ContribuyenteInputDTO;
 import com.metamapa.dtos.input.ContribuyenteKeycloakRequest;
 import com.metamapa.dtos.output.ContribuyenteOutputDTO;
 import com.metamapa.dtos.output.ContribuyenteSistemaResponse;
 import com.metamapa.exceptions.DatosInvalidosException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.metamapa.services.ServicioContribuyente;
@@ -15,7 +17,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("/contribuyentes")
-@CrossOrigin(origins = "http://localhost:3000")
 public class controladorContribuyentes {
     @Autowired
     private ServicioContribuyente servicioContribuyente;
@@ -30,6 +31,7 @@ public class controladorContribuyentes {
      * @throws DatosInvalidosException si keycloakId es null o vacío (retorna 400)
      */
     @PostMapping("/sync-keycloak")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ContribuyenteSistemaResponse> syncKeycloak(@RequestBody ContribuyenteKeycloakRequest request) {
         // Validación adicional en el controller
         if (request == null || request.getKeycloakId() == null || request.getKeycloakId().trim().isEmpty()) {
@@ -52,6 +54,7 @@ public class controladorContribuyentes {
     }
 
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> agregarContribuyente(@RequestBody ContribuyenteInputDTO contribuyenteInputDTO){
         long id = servicioContribuyente.registrarContribuyente(contribuyenteInputDTO);
         var c = servicioContribuyente.buscarContribuyente(id);
@@ -66,6 +69,7 @@ public class controladorContribuyentes {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<List<ContribuyenteOutputDTO>> listarContribuyentes(){
         var contribuyentes = servicioContribuyente.listarContribuyentes();
         List<ContribuyenteOutputDTO> output = contribuyentes.stream()
@@ -82,6 +86,7 @@ public class controladorContribuyentes {
     }
 
     @GetMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> obtenerContribuyente(@PathVariable long id){
         ContribuyenteOutputDTO contribuyenteOutputDTO = new ContribuyenteOutputDTO();
         var c = servicioContribuyente.buscarContribuyente(id);
@@ -94,6 +99,7 @@ public class controladorContribuyentes {
     }
 
     @PutMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> actualizarContribuyente(@PathVariable long id, @RequestBody ContribuyenteInputDTO contribuyenteInputDTO){
         var c = servicioContribuyente.buscarContribuyente(id);
         if (c == null) return ResponseEntity.status(404).body(null);
@@ -113,11 +119,57 @@ public class controladorContribuyentes {
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<Void> eliminarContribuyente(@PathVariable long id){
         var c = servicioContribuyente.buscarContribuyente(id);
         if (c == null) return ResponseEntity.status(404).build();
 
         servicioContribuyente.eliminarContribuyente(id);
         return ResponseEntity.status(204).build();
+    }
+    // son distintos a los que estan arriba porque estos funcionan con keycloakID y no con Id comun
+    @GetMapping("/me/{keycloakId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<ContribuyenteOutputDTO> obtenerConKeycloak(
+            @PathVariable String keycloakId
+    ) {
+        Contribuyente c = servicioContribuyente.buscarContribuyentePorKeycloakId(keycloakId);
+
+        if (c == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        ContribuyenteOutputDTO dto = new ContribuyenteOutputDTO();
+        dto.setId(c.getId());
+        dto.setNombre(c.getNombre());
+        dto.setApellido(c.getApellido());
+        dto.setEdad(c.getEdad());
+
+        return ResponseEntity.ok(dto);
+    }
+    @PutMapping("/me/{keycloakId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<ContribuyenteOutputDTO> actualizarConKeycloak(
+            @PathVariable String keycloakId,
+            @RequestBody ContribuyenteInputDTO dto
+    ) {
+        Contribuyente actualizado = servicioContribuyente.actualizarConKeycloak(
+                keycloakId,
+                dto.getNombre(),
+                dto.getApellido(),
+                dto.getEdad()
+        );
+
+        if (actualizado == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        ContribuyenteOutputDTO output = new ContribuyenteOutputDTO();
+        output.setId(actualizado.getId());
+        output.setNombre(actualizado.getNombre());
+        output.setApellido(actualizado.getApellido());
+        output.setEdad(actualizado.getEdad());
+
+        return ResponseEntity.ok(output);
     }
 }
