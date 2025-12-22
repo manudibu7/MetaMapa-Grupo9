@@ -32,11 +32,13 @@ public class ServicioContribuciones {
     private IContribucionesRepository repositorio;
     final private PoliticaEdicion politicaEdicion= new PoliticaEdicion();
     @Autowired
+    private CloudinaryService cloudinaryService;
+    @Autowired
     private ServicioContribuyente servicioContribuyente;
     private HechoMapper hechoMapper = new HechoMapper();
     private ArchivoMapper archivoMapper = new ArchivoMapper();
     private ContribucionMapper contribucionMapper = new ContribucionMapper();
-    private final Path rootLocation = Paths.get("uploads");
+
     /**
      * Obtiene todas las contribuciones de un contribuyente por su ID interno.
      * @param contribuyenteId ID interno del contribuyente
@@ -150,17 +152,17 @@ public class ServicioContribuciones {
         try {
             // 2. Guardar el archivo físicamente (SIMULACIÓN LOCAL)
             // En producción, aquí llamarías a S3 o Cloudinary
-            Files.createDirectories(rootLocation);
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
 
             // Generar la URL (En local sería algo así, en la nube te la da el proveedor)
-            String urlGenerada = "/uploads/" + filename;
+            //String urlGenerada = "/uploads/" + filename;
+
+            // 3. Crear la entidad Archivo
+            String urlArchivo = cloudinaryService.subirArchivo(file);
 
             // 3. Crear la entidad Archivo
             Archivo archivo = new Archivo();
-            archivo.setUrl(urlGenerada);
-            archivo.setTamanio(String.valueOf(file.getSize())); // Guardamos el tamaño en bytes
+            archivo.setUrl(urlArchivo);
+            archivo.setTamanio(String.valueOf(file.getSize()));
 
             // Convertir el String "IMAGEN", "VIDEO" al Enum
             try {
@@ -173,9 +175,8 @@ public class ServicioContribuciones {
             contribucion.getHecho().agregarAdjunto(archivo);
             repositorio.save(contribucion);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Error al guardar el archivo: " + e.getMessage());
-        }
+        } catch (IllegalArgumentException e) {
+            throw new DatosInvalidosException("Tipo de archivo no válido: " + tipoStr);        }
     }
 
     public void adjuntarArchivo(long idContribucion, ArchivoInputDTO dto){
