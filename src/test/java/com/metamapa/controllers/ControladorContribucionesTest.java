@@ -169,7 +169,7 @@ class ControladorContribucionesTest {
         UbicacionOutputDTO ubicacion = new UbicacionOutputDTO(-34.6037f, -58.3816f);
         hecho.setUbicacion(ubicacion);
         
-        ContribucionOutputDTO outputDTO = new ContribucionOutputDTO(1L, hecho, id, false);
+        ContribucionOutputDTO outputDTO = new ContribucionOutputDTO(1L, "Test User", hecho, id, false);
 
         when(servicioContribuciones.obtener(id))
             .thenReturn(outputDTO);
@@ -229,8 +229,8 @@ class ControladorContribucionesTest {
         hecho2.setFecha(LocalDate.of(2023, 2, 20));
         hecho2.setCategoria("Cultura");
 
-        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 10L, false);
-        ContribucionOutputDTO contribucion2 = new ContribucionOutputDTO(contribuyenteId, hecho2, 11L, false);
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, "Usuario Test", hecho1, 10L, false);
+        ContribucionOutputDTO contribucion2 = new ContribucionOutputDTO(contribuyenteId, "Usuario Test", hecho2, 11L, false);
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1, contribucion2);
 
@@ -289,7 +289,7 @@ class ControladorContribucionesTest {
         hecho1.setFecha(LocalDate.of(2023, 3, 10));
         hecho1.setCategoria("Tecnología");
 
-        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, hecho1, 20L, false);
+        ContribucionOutputDTO contribucion1 = new ContribucionOutputDTO(contribuyenteId, "Keycloak User", hecho1, 20L, false);
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(contribucion1);
 
@@ -355,9 +355,9 @@ class ControladorContribucionesTest {
         hecho3.setCategoria("Cat3");
 
         List<ContribucionOutputDTO> contribuciones = Arrays.asList(
-            new ContribucionOutputDTO(contribuyenteId, hecho1, 100L, false),
-            new ContribucionOutputDTO(contribuyenteId, hecho2, 101L, false),
-            new ContribucionOutputDTO(contribuyenteId, hecho3, 102L, false)
+            new ContribucionOutputDTO(contribuyenteId, "Multi User", hecho1, 100L, false),
+            new ContribucionOutputDTO(contribuyenteId, "Multi User", hecho2, 101L, false),
+            new ContribucionOutputDTO(contribuyenteId, "Multi User", hecho3, 102L, false)
         );
 
         when(servicioContribuciones.obtenerContribucionesPorContribuyente(contribuyenteId))

@@ -76,8 +76,8 @@ class ControladorRevisionesTest {
         hecho2.setFecha(LocalDate.of(2024, 1, 20));
         hecho2.setCategoria("Cultura");
         
-        ContribucionOutputDTO contrib1 = new ContribucionOutputDTO(1L, hecho1, 101L, false);
-        ContribucionOutputDTO contrib2 = new ContribucionOutputDTO(2L, hecho2, 102L, false);
+        ContribucionOutputDTO contrib1 = new ContribucionOutputDTO(1L, "Contribuyente 1", hecho1, 101L, false);
+        ContribucionOutputDTO contrib2 = new ContribucionOutputDTO(2L, "Contribuyente 2", hecho2, 102L, false);
 
         List<ContribucionOutputDTO> pendientes = Arrays.asList(contrib1, contrib2);
         
@@ -234,7 +234,7 @@ class ControladorRevisionesTest {
         hecho.setFecha(LocalDate.of(2024, 10, 28));
         hecho.setCategoria("Historia");
         
-        ContribucionOutputDTO contrib = new ContribucionOutputDTO(1L, hecho, 200L, false);
+        ContribucionOutputDTO contrib = new ContribucionOutputDTO(1L, "Contribuyente Test", hecho, 200L, false);
         when(servicioRevisiones.listarPendientes())
             .thenReturn(List.of(contrib));
 
