@@ -31,7 +31,6 @@ public class controladorContribuyentes {
      * @throws DatosInvalidosException si keycloakId es null o vacío (retorna 400)
      */
     @PostMapping("/sync-keycloak")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ContribuyenteSistemaResponse> syncKeycloak(@RequestBody ContribuyenteKeycloakRequest request) {
         // Validación adicional en el controller
         if (request == null || request.getKeycloakId() == null || request.getKeycloakId().trim().isEmpty()) {
@@ -54,7 +53,6 @@ public class controladorContribuyentes {
     }
 
     @PostMapping
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> agregarContribuyente(@RequestBody ContribuyenteInputDTO contribuyenteInputDTO){
         long id = servicioContribuyente.registrarContribuyente(contribuyenteInputDTO);
         var c = servicioContribuyente.buscarContribuyente(id);
@@ -69,7 +67,6 @@ public class controladorContribuyentes {
     }
 
     @GetMapping
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<List<ContribuyenteOutputDTO>> listarContribuyentes(){
         var contribuyentes = servicioContribuyente.listarContribuyentes();
         List<ContribuyenteOutputDTO> output = contribuyentes.stream()
@@ -86,7 +83,6 @@ public class controladorContribuyentes {
     }
 
     @GetMapping("/{id}")
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> obtenerContribuyente(@PathVariable long id){
         ContribuyenteOutputDTO contribuyenteOutputDTO = new ContribuyenteOutputDTO();
         var c = servicioContribuyente.buscarContribuyente(id);
@@ -99,7 +95,6 @@ public class controladorContribuyentes {
     }
 
     @PutMapping("/{id}")
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<ContribuyenteOutputDTO> actualizarContribuyente(@PathVariable long id, @RequestBody ContribuyenteInputDTO contribuyenteInputDTO){
         var c = servicioContribuyente.buscarContribuyente(id);
         if (c == null) return ResponseEntity.status(404).body(null);
@@ -119,7 +114,6 @@ public class controladorContribuyentes {
     }
 
     @DeleteMapping("/{id}")
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<Void> eliminarContribuyente(@PathVariable long id){
         var c = servicioContribuyente.buscarContribuyente(id);
         if (c == null) return ResponseEntity.status(404).build();
@@ -129,7 +123,6 @@ public class controladorContribuyentes {
     }
     // son distintos a los que estan arriba porque estos funcionan con keycloakID y no con Id comun
     @GetMapping("/me/{keycloakId}")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ContribuyenteOutputDTO> obtenerConKeycloak(
             @PathVariable String keycloakId
     ) {
@@ -148,7 +141,6 @@ public class controladorContribuyentes {
         return ResponseEntity.ok(dto);
     }
     @PutMapping("/me/{keycloakId}")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ContribuyenteOutputDTO> actualizarConKeycloak(
             @PathVariable String keycloakId,
             @RequestBody ContribuyenteInputDTO dto

@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/revisiones")
 @RequiredArgsConstructor // Lombok: genera constructor con servicio inyectado
-@CrossOrigin(origins = "http://localhost:3000") // opcional para pruebas desde front
 public class ControladorRevisiones {
 
     private final ServicioRevisiones servicioRevision;

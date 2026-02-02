@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/contribuciones")
-@CrossOrigin(origins = "http://localhost:3000")
 public class controladorContribuciones {
     @Autowired
     private ServicioContribuciones servicioContribucion;
