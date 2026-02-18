@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContribucionInputDTO {
+
     Long idContribuyente;
     HechoInputDTO hecho;
     Boolean anonimo;

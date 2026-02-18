@@ -5,6 +5,7 @@ import com.metamapa.dtos.input.ArchivoInputDTO;
 import com.metamapa.dtos.input.ContribucionInputDTO;
 import com.metamapa.dtos.output.ContribucionOutputDTO;
 import com.metamapa.dtos.output.ContribuyenteOutputDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import com.metamapa.services.ServicioContribuciones;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/contribuciones")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,12 +24,14 @@ public class controladorContribuciones {
 
     @PostMapping
     ResponseEntity<Long> crearContribucion(@RequestBody ContribucionInputDTO contribucionInputDTO){
+       log.info("Recibiendo solicitud para crear contribución:");
         long id = servicioContribucion.crear(contribucionInputDTO);
         return ResponseEntity.status(201).body(id);
     }
 
     @PutMapping("/{id}")
     ResponseEntity<Void> editarContribucion(@PathVariable long id, @RequestBody ContribucionInputDTO dto){
+        log.info("Recibiendo solicitud para editar contribución con ID: {}", id);
         servicioContribucion.editar(id, dto.getHecho());
         return ResponseEntity.status(200).build();
     }
@@ -45,12 +48,14 @@ public class controladorContribuciones {
             @RequestParam("file") MultipartFile file,
             @RequestParam("tipo") String tipo) {
 
+        log.info("Recibiendo solicitud para subir archivo para contribución con ID: {}", id);
         servicioContribucion.adjuntarArchivoBinario(id, file, tipo);
         return ResponseEntity.status(200).build();
     }
 
     @GetMapping("/{id}")
     ResponseEntity<ContribucionOutputDTO> verContribucion(@PathVariable long id){
+        log.info("Recibiendo solicitud para obtener contribución con ID: {}", id);
         ContribucionOutputDTO c = servicioContribucion.obtener(id);
         return ResponseEntity.status(200).body(c);
     }
@@ -63,6 +68,7 @@ public class controladorContribuciones {
     @GetMapping("/contribuyente/{contribuyenteId}")
     ResponseEntity<List<ContribucionOutputDTO>> obtenerContribucionesPorContribuyente(
             @PathVariable Long contribuyenteId) {
+        log.info("Recibiendo solicitud para obtener contribuciones del contribuyente con ID: {}", contribuyenteId);
         List<ContribucionOutputDTO> contribuciones =
                 servicioContribucion.obtenerContribucionesPorContribuyente(contribuyenteId);
         return ResponseEntity.ok(contribuciones);
@@ -76,8 +82,10 @@ public class controladorContribuciones {
     @GetMapping("/keycloak/{keycloakId}")
     ResponseEntity<List<ContribucionOutputDTO>> obtenerContribucionesPorKeycloakId(
             @PathVariable String keycloakId) {
+        log.info("Recibiendo solicitud para obtener contribuciones del contribuyente con keycloakId: {}", keycloakId);
         List<ContribucionOutputDTO> contribuciones =
                 servicioContribucion.obtenerContribucionesPorKeycloakId(keycloakId);
+        log.debug("Contribuciones obtenidas para keycloakId '{}': {} contribuciones", keycloakId, contribuciones.size());
         return ResponseEntity.ok(contribuciones);
     }
 }

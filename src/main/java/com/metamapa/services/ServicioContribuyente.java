@@ -4,12 +4,13 @@ import com.metamapa.domain.Contribuyente;
 import com.metamapa.dtos.input.ContribuyenteInputDTO;
 import com.metamapa.exceptions.DatosInvalidosException;
 import com.metamapa.exceptions.RecursoNoEncontradoException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.metamapa.repository.IContribuyentesRepository;
 
 import java.util.Optional;
-
+@Slf4j
 @Service
 public class ServicioContribuyente {
     @Autowired
@@ -89,7 +90,9 @@ public class ServicioContribuyente {
     }
 
     public Contribuyente buscarContribuyente(Long id){
+       log.debug("Buscando contribuyente con ID: {}", id);
         if (id == null || id <= 0) {
+            log.warn("Intento de búsqueda de contribuyente con ID inválido: {}", id);
             throw new DatosInvalidosException("El ID del contribuyente debe ser un número positivo");
         }
         
@@ -106,6 +109,7 @@ public class ServicioContribuyente {
      */
     public Contribuyente buscarContribuyentePorKeycloakId(String keycloakId) {
         if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            log.warn("Intento de búsqueda de contribuyente con keycloakId inválido: {}", keycloakId);
             throw new DatosInvalidosException("El keycloakId es obligatorio y no puede estar vacío");
         }
 
@@ -114,15 +118,20 @@ public class ServicioContribuyente {
     }
 
     public java.util.List<Contribuyente> listarContribuyentes(){
+       log.info("Listando todos los contribuyentes");
         return repositorio.findAll();
     }
 
     public void actualizarContribuyente(Contribuyente contribuyente){
+
+        log.info("Intentando actualizar contribuyente con ID: {}", contribuyente != null ? contribuyente.getId() : "null");
         if (contribuyente == null || contribuyente.getId() == null) {
+            log.warn("Intento de actualización de contribuyente con datos inválidos: contribuyente o ID nulo");
             throw new DatosInvalidosException("El contribuyente y su ID no pueden ser nulos");
         }
         
         if (!repositorio.existsById(contribuyente.getId())) {
+            log.warn("Intento de actualización de contribuyente no existente con ID: {}", contribuyente.getId());
             throw new RecursoNoEncontradoException("Contribuyente no encontrado con ID: " + contribuyente.getId());
         }
         
@@ -146,11 +155,15 @@ public class ServicioContribuyente {
             String apellido,
             Integer edad
     ) {
+        log.info("Intentando actualizar contribuyente con keycloakId: {}", keycloakId);
         if (keycloakId == null || keycloakId.trim().isEmpty()) {
+            log.warn("Intento de actualización de contribuyente con keycloakId inválido: {}", keycloakId);
             throw new DatosInvalidosException("keycloakId inválido");
         }
 
         if (edad != null && (edad < 0 || edad > 150)) {
+
+            log.warn("Intento de actualización de contribuyente con edad inválida: {}", edad);
             throw new DatosInvalidosException("La edad debe estar entre 0 y 150 años");
         }
 
@@ -158,22 +171,27 @@ public class ServicioContribuyente {
         boolean tieneApellido = apellido != null && !apellido.trim().isEmpty();
 
         if (tieneNombre ^ tieneApellido) {
+            log.warn("Intento de actualización de contribuyente con nombre o apellido incompleto: nombre='{}', apellido='{}'", nombre, apellido);
             throw new DatosInvalidosException(
                     "Nombre y apellido deben proporcionarse juntos"
             );
         }
 
         Contribuyente contribuyente = repositorio.findByKeycloakId(keycloakId)
-                .orElseThrow(() ->
-                        new RecursoNoEncontradoException(
-                                "Contribuyente no encontrado para el usuario autenticado"
-                        )
+                .orElseThrow(() ->{
+                        log.warn("Contribuyente no encontrado para keycloakId: {}", keycloakId);
+                        return new RecursoNoEncontradoException(
+                                    "Contribuyente no encontrado para el usuario autenticado"
+                            );
+                }
                 );
 
         contribuyente.setNombre(nombre);
         contribuyente.setApellido(apellido);
         contribuyente.setEdad(edad);
-
+        log.debug("Actualizando contribuyente: keycloakId={}, nombre={}, apellido={}, edad={}",
+            keycloakId, nombre, apellido, edad
+        );
         return repositorio.save(contribuyente);
     }
 }
