@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "https://front-metamapa.vercel.app",
+                        "https://front-metamapa-lo3l.vercel.app",
                         "http://localhost:3000"  // para desarrollo local
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
