@@ -24,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://front-metamapa.vercel.app",
                         "https://front-metamapa-lo3l.vercel.app",
+                        "https://front-metamapa-dun.vercel.app",
                         "http://localhost:3000"  // para desarrollo local
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
