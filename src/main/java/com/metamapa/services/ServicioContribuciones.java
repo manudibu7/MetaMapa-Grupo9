@@ -244,7 +244,7 @@ public class ServicioContribuciones {
         Contribucion c = repositorio.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Contribución no encontrada para ID={}", id);
-                    return new RecursoNoEncontradoException("Contribución no encontrada con ID: " + id)
+                    return new RecursoNoEncontradoException("Contribución no encontrada con ID: " + id);
                 });
 
         ContribucionOutputDTO dto = contribucionMapper.contribucionToOutputDTO(c);
@@ -294,7 +294,7 @@ public class ServicioContribuciones {
             throw new DatosInvalidosException("La latitud y longitud son obligatorias");
         }
         if (ubicacion.getLatitud() < -90 || ubicacion.getLatitud() > 90) {
-            log
+            log.warn("Latitud fuera de rango: {}", ubicacion.getLatitud());
             throw new DatosInvalidosException("La latitud debe estar entre -90 y 90");
         }
         if (ubicacion.getLongitud() < -180 || ubicacion.getLongitud() > 180) {
