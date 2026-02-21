@@ -3,15 +3,6 @@
   <component name="CopilotDiffPersistence">
     <option name="pendingDiffs">
       <map>
-        <entry key="$PROJECT_DIR$/src/main/java/com/metamapa/controllers/ExportacionController.java">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/src/main/java/com/metamapa/controllers/ExportacionController.java" />
-              <option name="originalContent" value="// controllers/ExportacionController.java&#10;package com.metamapa.controllers;&#10;&#10;import com.metamapa.infrastructure.Outbox.BandejaDeSalida;&#10;import com.metamapa.dtos.output.ContribuyenteOutputDTO;&#10;import com.metamapa.dtos.output.HechoOutputDTO;&#10;import lombok.RequiredArgsConstructor;&#10;import org.springframework.http.ResponseEntity;&#10;import org.springframework.web.bind.annotation.*;&#10;&#10;import java.util.List;&#10;&#10;@RestController&#10;@RequestMapping(&quot;/export&quot;)&#10;@RequiredArgsConstructor&#10;public class ExportacionController {&#10;&#10;    private final BandejaDeSalida outbox;&#10;&#10;    @GetMapping(&quot;/hechos&quot;)&#10;    ResponseEntity&lt;List&lt;HechoOutputDTO&gt;&gt; obtenerHechos(){&#10;        List&lt;HechoOutputDTO&gt; hechos = outbox.pendientesDeEnvio();  // Cambio de findAll() a pendientesDeEnvio()&#10;        outbox.limpiar();  // Cambio de deleteAll() a limpiar()&#10;        return ResponseEntity.status(200).body(hechos);&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="// controllers/ExportacionController.java&#10;package com.metamapa.controllers;&#10;&#10;import com.metamapa.infrastructure.Outbox.BandejaDeSalida;&#10;import com.metamapa.dtos.output.ContribuyenteOutputDTO;&#10;import com.metamapa.dtos.output.HechoOutputDTO;&#10;import lombok.RequiredArgsConstructor;&#10;import org.springframework.http.ResponseEntity;&#10;import org.springframework.web.bind.annotation.*;&#10;&#10;import java.util.List;&#10;&#10;@RestController&#10;@RequestMapping(&quot;/export&quot;)&#10;@RequiredArgsConstructor&#10;public class ExportacionController {&#10;&#10;    private final BandejaDeSalida outbox;&#10;&#10;    @GetMapping(&quot;/hechos&quot;)&#10;    ResponseEntity&lt;List&lt;HechoOutputDTO&gt;&gt; obtenerHechos(){&#10;        List&lt;HechoOutputDTO&gt; hechos = outbox.pendientesDeEnvio();  // Cambio de findAll() a pendientesDeEnvio()&#10;        outbox.limpiar();  // Cambio de deleteAll() a limpiar()&#10;        return ResponseEntity.status(200).body(hechos);&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/metamapa/services/ServicioRevisiones.java">
           <value>
             <PendingDiffInfo>

@@ -7,12 +7,13 @@ import com.metamapa.dtos.output.ContribucionOutputDTO;
 import com.metamapa.dtos.output.RevisionOutputDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.metamapa.services.ServicioRevisiones;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/revisiones")
 @RequiredArgsConstructor // Lombok: genera constructor con servicio inyectado
@@ -23,14 +24,18 @@ public class ControladorRevisiones {
     // GET /revisiones/pendientes
     @GetMapping("/pendientes")
     public ResponseEntity<List<ContribucionOutputDTO>> listarPendientes() {
+        log.info("Recibiendo solicitud para listar contribuciones pendientes de revisión");
         List<ContribucionOutputDTO> pendientes = servicioRevision.listarPendientes();
+        log.debug("Contribuciones pendientes encontradas: {}", pendientes != null ? pendientes.size() : 0);
         return ResponseEntity.ok(pendientes);
     }
 
     // GET /revisiones/{id}
     @GetMapping("/{idContribucion}")
     public ResponseEntity<RevisionOutputDTO> verDetalle(@PathVariable Long idContribucion) {
+        log.info("Recibiendo solicitud para ver detalle de revisión de contribución id={}", idContribucion);
         RevisionOutputDTO rev = servicioRevision.detalle(idContribucion);
+        log.info("Detalle de revisión obtenido para contribución id={}:", idContribucion);
         return ResponseEntity.ok(rev);
     }
 
@@ -38,15 +43,19 @@ public class ControladorRevisiones {
     // POST /revisiones/{id}/aceptar
     @PostMapping("/{idContribucion}/aceptar")
     public ResponseEntity<Void> aceptar(@PathVariable Long idContribucion, @RequestBody(required = false) ComentariosDTO body) {
+        log.info("Recibiendo solicitud para aceptar contribución id={}", idContribucion);
+
         String comentarios = body != null ? body.getComentarios() : null;
         Long idContribuyente = body != null ? body.getContribuyenteId() : null;
         servicioRevision.aceptar(idContribucion, comentarios, idContribuyente);
+
         return ResponseEntity.noContent().build();
     }
 
     // POST /revisiones/{id}/aceptar-con-cambios
     @PostMapping("/{idContribucion}/aceptar-con-cambios")
     public ResponseEntity<Void> aceptarConCambios(@PathVariable Long idContribucion, @RequestBody ComentariosDTO body) {
+        log.info("Recibiendo solicitud para aceptar contribución con cambios id={}", idContribucion);
         servicioRevision.aceptarConSugerencias(idContribucion, body != null ? body.getComentarios() : null,
                 body != null ? body.getContribuyenteId() : null
         );
@@ -56,6 +65,7 @@ public class ControladorRevisiones {
     // POST /revisiones/{id}/rechazar
     @PostMapping("/{idContribucion}/rechazar")
     public ResponseEntity<Void> rechazar(@PathVariable Long idContribucion, @RequestBody ComentariosDTO body) {
+        log.info("Recibiendo solicitud para rechazar contribución id={}", idContribucion);
         servicioRevision.rechazar(idContribucion, body != null ? body.getComentarios() : null,
                 body != null ? body.getContribuyenteId() : null
         );

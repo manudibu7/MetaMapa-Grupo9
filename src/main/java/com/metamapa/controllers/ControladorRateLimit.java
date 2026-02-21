@@ -1,6 +1,7 @@
 package com.metamapa.controllers;
 
 import com.metamapa.config.RateLimitConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.Map;
 /**
  * controlador para administrar el sistema de rate limiting
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/rate-limit")
 public class ControladorRateLimit {
@@ -27,6 +29,7 @@ public class ControladorRateLimit {
      */
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
+
         return ResponseEntity.ok(rateLimitConfig.getStats());
     }
 
@@ -36,6 +39,7 @@ public class ControladorRateLimit {
      */
     @GetMapping("/check/{ip}")
     public ResponseEntity<Map<String, Object>> checkIp(@PathVariable String ip) {
+        log.info("Consultando info de rate limit para IP: {}", ip);
         return ResponseEntity.ok(rateLimitConfig.getIpInfo(ip));
     }
 
@@ -45,6 +49,7 @@ public class ControladorRateLimit {
      */
     @PostMapping("/unblock/{ip}")
     public ResponseEntity<Map<String, Object>> unblockIp(@PathVariable String ip) {
+        log.info("Intentando desbloquear IP: {}", ip);
         boolean result = rateLimitConfig.unblockIp(ip);
         return ResponseEntity.ok(Map.of(
             "ip", ip,
@@ -59,6 +64,7 @@ public class ControladorRateLimit {
      */
     @PostMapping("/reset/{ip}")
     public ResponseEntity<Map<String, Object>> resetIpCounter(@PathVariable String ip) {
+        log.info("Intentando resetear contador de IP: {}", ip);
         boolean result = rateLimitConfig.resetIpCounter(ip);
         return ResponseEntity.ok(Map.of(
             "ip", ip,

@@ -1,5 +1,6 @@
 package com.metamapa.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.Map;
  * controlador p/ consultar el estado del filtro de ips
  * mas para debugging y verificacion de la configuracion
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/ip-filter")
 public class ControladorIpFilter {
@@ -32,6 +34,10 @@ public class ControladorIpFilter {
      */
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> getStatus() {
+
+        log.info("Obteniendo estado del filtro de IPs: enabled={}, whitelist={}, blacklist={}",
+                filterEnabled, whitelistConfig, blacklistConfig);
+
         Map<String, Object> status = new HashMap<>();
         status.put("enabled", filterEnabled);
         status.put("whitelist", parseIpList(whitelistConfig));
@@ -44,6 +50,8 @@ public class ControladorIpFilter {
      */
     @GetMapping("/check/{ip}")
     public ResponseEntity<Map<String, Object>> checkIp(@PathVariable String ip) {
+
+        log.info("Verificando IP: {}", ip);
         // Limpiar la IP de espacios y saltos de línea
         String cleanIp = ip.trim().replace("\n", "").replace("\r", "");
 
@@ -51,6 +59,7 @@ public class ControladorIpFilter {
         result.put("ip", cleanIp);
 
         if (!filterEnabled) {
+            log.info("Filtro de IP deshabilitado, permitiendo todas las IPs");
             result.put("status", "ALLOWED");
             result.put("reason", "Filtro de IP deshabilitado");
             return ResponseEntity.ok(result);
@@ -60,12 +69,15 @@ public class ControladorIpFilter {
         List<String> blacklist = parseIpList(blacklistConfig);
 
         if (!blacklist.isEmpty() && blacklist.contains(cleanIp)) {
+            log.debug("IP {} está en la lista negra, bloqueando acceso", cleanIp);
             result.put("status", "BLOCKED");
             result.put("reason", "IP en lista negra (blacklist)");
         } else if (!whitelist.isEmpty() && !whitelist.contains(cleanIp)) {
+            log.debug("IP {} no está en la lista blanca, bloqueando acceso", cleanIp);
             result.put("status", "BLOCKED");
             result.put("reason", "IP no está en lista blanca (whitelist)");
         } else {
+            log.debug("IP {} permitida por el filtro de IPs", cleanIp);
             result.put("status", "ALLOWED");
             result.put("reason", "IP permitida");
         }
@@ -74,6 +86,7 @@ public class ControladorIpFilter {
     }
 
     private List<String> parseIpList(String ipConfig) {
+        log.info("Parseando configuración de IPs: {}", ipConfig);
         if (ipConfig == null || ipConfig.trim().isEmpty()) {
             return List.of();
         }
